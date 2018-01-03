@@ -148,13 +148,13 @@ function getSummary($from,$to,$filter,$dbhost,$nbrecs) {
     $errMsg = "";
 
     $query = "
-    SELECT fgw_title,SUM(fgw_duration) AS duration
+    SELECT fgw_host,fgw_title,SUM(fgw_duration) AS duration
     FROM fgw
     WHERE
     fgw_title like '%".$filter."%' and
     fgw_time >=".$from." and
     fgw_time <=".$to."
-    GROUP BY fgw_title
+    GROUP BY fgw_host,fgw_title
     ORDER by duration desc
     LIMIT ".$nbrecs."
     ";
@@ -186,6 +186,7 @@ function getSummary($from,$to,$filter,$dbhost,$nbrecs) {
         while($row = $result->fetch_assoc()) {
 
             if ($outp != "") {$outp .= ",";}
+            $host = $row["fgw_host"];
             $title = $row["fgw_title"];
             if ($title == null) { $title = ""; }
 
@@ -193,12 +194,13 @@ function getSummary($from,$to,$filter,$dbhost,$nbrecs) {
 
             $outp .= '{';
             
+            $outp .= '"host":"'   . $host . '",';
             $outp .= '"title":"'   . utf8_encode($title). '",';
             $outp .= '"duration":"'. $duration     . '",';
             $outp .= '"dur_min":"' . number_format(strval($duration/60),0) . '"';
             $outp .= '}';
 
-            $myfgw = new Fgw("","","",utf8_encode($title),number_format(strval($duration/60),0));
+            $myfgw = new Fgw("","",$host,utf8_encode($title),number_format(strval($duration/60),0));
             $fgws[] = $myfgw;
         }
     } else {
@@ -221,7 +223,7 @@ function getDailySummary($from,$to,$filter,$dbhost,$nbrecs,$order) {
 
 
     $query = "
-    SELECT date(fgw_time) as date, fgw_title,SUM(fgw_duration) AS duration, SUM(fgw_duration)/60 AS duration_min
+    SELECT date(fgw_time) as date, fgw_host, fgw_title,SUM(fgw_duration) AS duration, SUM(fgw_duration)/60 AS duration_min
     FROM fgw
     WHERE
     fgw_title is not null and
@@ -230,7 +232,7 @@ function getDailySummary($from,$to,$filter,$dbhost,$nbrecs,$order) {
     "fgw_time >=".$from." and
     fgw_title like '%".$filter."%' and
     fgw_time <=".$to."
-    GROUP BY fgw_title,date
+    GROUP BY fgw_host,fgw_title,date
     ORDER by ".$order."
     LIMIT ".$nbrecs."
     ";
@@ -266,6 +268,7 @@ function getDailySummary($from,$to,$filter,$dbhost,$nbrecs,$order) {
 
             if ($outp != "") {$outp .= ",";}
 
+            $host = $row["fgw_host"];
             $title = $row["fgw_title"]; if ($title == null) { $title = ""; }
             $date = $row["date"];
             $duration = $row["duration"];
@@ -276,13 +279,14 @@ function getDailySummary($from,$to,$filter,$dbhost,$nbrecs,$order) {
             $outp .= '{';
 
             $outp .= '"date":'   . json_encode($date). ',';
+            $outp .= '"host":"'   . $host . '",';
             $outp .= '"title":"'   . utf8_encode($title). '",';
             $outp .= '"duration":"' . number_format(strval($duration/60),0) . '"';
             $outp .= '}';
             
             //echo $outp."\n\n";
 
-            $myfgw = new Fgw("",$date,"",utf8_encode($title),number_format(strval($duration/60),0));
+            $myfgw = new Fgw("",$date,$host,utf8_encode($title),number_format(strval($duration/60),0));
             $fgws[] = $myfgw;
         }
     } else {

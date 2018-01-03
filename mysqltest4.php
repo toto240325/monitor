@@ -318,7 +318,7 @@ $toAgar = $toDateAgar->format('Y-m-d');
 $filter = urlencode('Agar.io - Google Chrome');
 $to = urlencode($to);
 
-$myPageAgarioOnly = "http://" . $webserver . "/angular/getWindowResult.php" .
+$myPageAgarioOnly = "http://" . $webserver . "/monitor/getWindowResult.php" .
     "?from='" . $fromAgar . "'" .
     "&to='" . $toAgar . "'" .
     "&filter=" . $filter .
@@ -370,7 +370,7 @@ if ($obj->errMsg != "") {
 $inFilter = urlencode('"Agar Private Server Agario Game Play Agario - Google Chrome","Agar.io - Google Chrome","slither.io - Google Chrome","diep.io - Google Chrome","space1.io - Google Chrome"');
 $to = urlencode($to);
 
-$myPageAgarioAndOtherGames = "http://" . $webserver . "/angular/getWindowResult.php" .
+$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
     "?from='" . $fromAgar . "'" .
     "&to='" . $toAgar . "'" .
     "&filter=" . $inFilter .
@@ -545,7 +545,7 @@ if ($obj->errMsg != "") {
                 return $filter('date')($fromDate,'yyyy-MM-dd');
             }
             $scope.getResults = function() {
-                $scope.myPage = "http://"+webserver+"/angular/getWindowResult.php" +
+                $scope.myPage = "http://"+webserver+"/monitor/getWindowResult.php" +
                 "?from='" + $scope.convStrToDate($scope.from) + "'" +
                 //"?from='" + $filter('date')($scope.fromDate,'yyyy-MM-dd') + "'" +
                 "&to='"+ $scope.to + "'" +
@@ -572,7 +572,7 @@ if ($obj->errMsg != "") {
             $scope.getResults();
 
             $scope.getLastTemp = function() {
-                $scope.myPage2 = "http://"+webserver+"/loki/getLastEvent.php" +
+                $scope.myPage2 = "http://"+webserver+"/monitor/getLastEvent.php" +
                 "?dbhost="+ $scope.dbhost+"&type=temperature";
                 $http.get($scope.myPage2)
                 .then(
@@ -588,7 +588,7 @@ if ($obj->errMsg != "") {
                 });
             }
             $scope.getLastEvent = function($myArray,$type) {
-                $myURL = "http://"+webserver+"/loki/getLastEvent.php?type="+$type;
+                $myURL = "http://"+webserver+"/monitor/getLastEvent.php?type="+$type;
                 //alert($myURL);
                 console.log("myURL37:"+$myURL);
                 $http.get($myURL)
@@ -607,7 +607,7 @@ if ($obj->errMsg != "") {
 
             }
             $scope.getLastEventGetWindowTitleMypc3 = function($myArray,$type) {
-                $myURL = "http://"+webserver+"/test/getLastTimeWindowTitle.php";
+                $myURL = "http://"+webserver+"/monitor/getLastTimeWindowTitle.php";
                 //alert("myurl 38 : " + $myURL);
                 console.log("myurl 38 : " + $myURL);
                 $http.get($myURL)
