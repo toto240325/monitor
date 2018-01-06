@@ -226,14 +226,14 @@ and returns a json_encoded string in a format compatible with googleGraph, like 
 ]
 }
  */
-function formatGraphData($dataArray)
+function formatGraphData($dataArray,$yAxisStr)
 {
     //echo json_encode($dataArray);
     //var_dump($dataArray);
     $table = array();
     $table['cols'] = array(
         array('label' => 'Date', 'type' => 'date'),
-        array('label' => 'temp', 'type' => 'number'),
+        array('label' => $yAxisStr, 'type' => 'number'),
     );
 
     $rows = array();
@@ -297,7 +297,7 @@ $graphData = completeGraphData($graphData, $timesArray, $period);
 $GGdata = convertGraphDataToGoogleGraph($graphData);
 //echo "GGdata1 : \n<br>".json_encode($GGdata)."\n<br>";
 
-$jsonTable3 = json_encode(formatGraphData($GGdata));
+$jsonTable3 = json_encode(formatGraphData($GGdata, "temp"));
 
 // prepare Agario graph -----------------------------------------------------------------------------
 $fromDateAgar = new DateTime(date('Y-m-d'));
@@ -312,58 +312,6 @@ $toAgar = $toDateAgar->format('Y-m-d');
 //$to = $to." 23:59:59";
 //echo "from - to : <br>";
 //echo $from." - ".$to."<br>";
-
-//----------------------------------------------------------------------------------
-// getting the data for Agario only
-$filter = urlencode('Agar.io - Google Chrome');
-$to = urlencode($to);
-
-$myPageAgarioOnly = "http://" . $webserver . "/monitor/getWindowResult.php" .
-    "?from='" . $fromAgar . "'" .
-    "&to='" . $toAgar . "'" .
-    "&filter=" . $filter .
-    "&dbhost=" . $dbhost .
-    "&nbrecs=100" .
-    "&order=date" .
-    "&myFunc=dailySummary";
-
-#echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
-//echo "mypage Agario : ".$myPageAgarioOnly."<br>";
-$json = file_get_contents($myPageAgarioOnly);
-//echo "json 33 : "."<br>";
-//print_r($json);
-//echo "<br>\ntest 34<br>";
-//var_dump($json);
-$obj = json_decode($json);
-//echo "<br>\njson 39<br>";
-//var_dump($obj);
-
-if ($obj->errMsg != "") {
-
-    echo "!!!!!!!!!!!!!!! Error getting data from mypc3 !!!!!!!! ";
-
-} else {
-    //echo "<br>json 40<br>";
-    //echo json_encode($obj->records)."<br>";
-    //echo "count : ".count($obj->records)."<br>";
-
-    //echo "<br>records 1 : ".json_encode($obj->records)."<br>";
-    $graphData = makeGraphDataFromAgario($obj->records);
-    //echo "<br>graphData1 : ".json_encode($graphData)."<br>";
-    //echo "<br>";
-    //$graphData = json_decode('[{"datetime":"2016-09-14 00:00:00","nbDetections":1},{"datetime":"2016-09-15 00:30:00","nbDetections":"0"},{"datetime":"2016-09-16 01:00:00","nbDetections":"0"}]');
-    //$GGdata = convertGraphDataToGoogleGraph($graphData);
-    //echo "GGdata4 : \n<br>".json_encode($GGdata)."\n<br>";
-    //    $GGdata = json_decode('[{"x":"2016-09-14 00:00:00","y":1},{"x":"2016-09-15 00:30:00","y":7},{"x":"2016-09-16 01:00:00","y":10}]',true);
-    $GGdata = $graphData;
-    //echo "GCdata2 : \n<br>".json_encode($GGdata)."\n<br>";
-    //echo "formatGraphData  : \n<br>";
-    //echo json_encode(formatGraphData($GGdata))."\n<br>";
-    $jsonTableAgarioOnly = json_encode(formatGraphData($GGdata));
-    //echo "formatGraphData3  : \n<br>";
-    //echo $jsonTableAgario."\n<br>";
-
-}
 
 //----------------------------------------------------------------------------------
 // getting the data related to all the different games
@@ -394,7 +342,7 @@ if ($obj->errMsg != "") {
 
 } else {
     //echo "count : ".count($obj->records)."<br>";
-    $timesArray = $obj->records;
+    //$timesArray = $obj->records;
 
     //echo json_encode($obj->records)."<br>";
 
@@ -415,14 +363,12 @@ if ($obj->errMsg != "") {
     //echo "formatGraphData  : \n<br>";
     //echo json_encode(formatGraphData($GGdata))."\n<br>";
 
-    $jsonTableAgarioAndOtherGames = json_encode(formatGraphData($GGdata));
+    $jsonTableAgarioAndOtherGames = json_encode(formatGraphData($GGdata, "Duration"));
     //echo "formatGraphData3  : \n<br>";
     //echo $jsonTableAgarioAndOtherGames."\n<br>";
 
 }
 
-//    echo "just before html\n\n";
-//    exit("test exit");
 
 ?>
 
@@ -770,7 +716,7 @@ if ($obj->errMsg != "") {
             // Create our data table out of JSON data loaded from server.
             var data = new google.visualization.DataTable(<?=$jsonTableAgarioAndOtherGames?>);
             var options = {
-                title: 'Agario.io graph',
+                title: 'Agar.io graph',
                 is3D: 'true',
                 width: 1000,
                 height: 400,
