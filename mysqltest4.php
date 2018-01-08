@@ -32,6 +32,7 @@ function displayRawTimes($timesArray)
         $i += 1;
     }
 }
+
 //----------------------------------------------------------------------------------
 /*  makes an array of which the elements are a datetime and a value; the datetimes go from $from to $to
 in increment of $period minutes; the value will contain the nb of times a detection has taken place
@@ -110,7 +111,8 @@ Note that timesArray must be sorted by datetime
 input  : [{"datetime":"2016-09-14 00:00:00","nbDetections":"0"},{"datetime":"2016-09-14 00:30:00","nbDetections":"0"},{"datetime":"2016-09-14 01:00:00","nbDetections":"0"}]
 output : [{"datetime":"2016-09-14 00:00:00","nbDetections":1},{"datetime":"2016-09-14 00:30:00","nbDetections":"0"},{"datetime":"2016-09-14 01:00:00","nbDetections":"0"}]
  */
-function completeGraphData($graphData, $timesArray, $period)
+
+ function completeGraphData($graphData, $timesArray, $period)
 {
     //echo "graphdata as input : \n<br>".json_encode($graphData)."\n<br>";
     //echo "timesarray : \n<br>"; var_dump ($timesArray);
@@ -315,13 +317,13 @@ $toAgar = $toDateAgar->format('Y-m-d');
 
 //----------------------------------------------------------------------------------
 // getting the data related to all the different games
-$inFilter = urlencode('"Agar Private Server Agario Game Play Agario - Google Chrome","Agar.io - Google Chrome","slither.io - Google Chrome","diep.io - Google Chrome","space1.io - Google Chrome"');
+$inTitleList = urlencode('"Agar Private Server Agario Game Play Agario - Google Chrome","Agar.io - Google Chrome","slither.io - Google Chrome","diep.io - Google Chrome","space1.io - Google Chrome"');
 $to = urlencode($to);
 
 $myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
     "?from='" . $fromAgar . "'" .
     "&to='" . $toAgar . "'" .
-    "&filter=" . $inFilter .
+    "&inTitleList=" . $inTitleList .
     "&dbhost=" . $dbhost .
     "&nbrecs=100" .
     "&order=date" .
@@ -467,7 +469,8 @@ if ($obj->errMsg != "") {
 
             $scope.from = (new Date()).toLocaleDateString("fr-BE", {hour12: false});
             $scope.to = "2099-12-31";
-            $scope.filter = "";
+            $scope.hostFilter = "";
+            $scope.titleFilter = "";
             $scope.myFunc = "dailySummary";
             $scope.dbhost = dbhost;
             $scope.nbrecs = "15";
@@ -493,9 +496,10 @@ if ($obj->errMsg != "") {
             $scope.getResults = function() {
                 $scope.myPage = "http://"+webserver+"/monitor/getWindowResult.php" +
                 "?from='" + $scope.convStrToDate($scope.from) + "'" +
-                //"?from='" + $filter('date')($scope.fromDate,'yyyy-MM-dd') + "'" +
+                //"?from='" + $titleFilter('date')($scope.fromDate,'yyyy-MM-dd') + "'" +
                 "&to='"+ $scope.to + "'" +
-                "&filter="+ $scope.filter +
+                "&hostFilter="+ $scope.hostFilter +
+                "&titleFilter="+ $scope.titleFilter +
                 "&dbhost="+ $scope.dbhost +
                 "&nbrecs="+ $scope.nbrecs +
                 "&order=duration+desc" +
@@ -506,6 +510,7 @@ if ($obj->errMsg != "") {
                 .then(
                 function(response) {
                     $scope.fgw = response.data.records;
+                    $scope.errorMsg = response.data.errMsg;
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -518,8 +523,8 @@ if ($obj->errMsg != "") {
             $scope.getResults();
 
             $scope.getLastTemp = function() {
-                $scope.myPage2 = "http://"+webserver+"/monitor/getLastEvent.php" +
-                "?dbhost="+ $scope.dbhost+"&type=temperature";
+                $scope.myPage2 = "http://"+webserver+"/monitor/getLastEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
+                console.log("myURL36:"+$scope.myPage2);
                 $http.get($scope.myPage2)
                 .then(
                 function(response) {
@@ -528,7 +533,7 @@ if ($obj->errMsg != "") {
                     $scope.lastDetectionTemp = response.data.text;
                 },
                 function(failure) {
-                    $errorMsg = "Error in getLastTemp : " + failure;
+                    $errorMsg = "Error in getLastEvent : " + failure;
                     console.log($errorMsg);
                     alert("error msg 36 : " + $errorMsg);
                 });
@@ -592,13 +597,11 @@ if ($obj->errMsg != "") {
         google.load('visualization', '1', {'packages':['corechart','timeline']});
 
         // Set a callback to run when the Google Visualization API is loaded.
-
         var mypageAgario = "<?=$myPageAgarioAndOtherGames?>";
         var from = "<?=$from?>";
         var to = "<?=$to?>";
 
         google.setOnLoadCallback(function() { drawChart3(from,to); });
-
         function drawChart3(from,to) {
 
             Date.prototype.addHours = function(hours) {
@@ -632,15 +635,14 @@ if ($obj->errMsg != "") {
                 console.log("test33 "+ d.addDays(1) + "----" + (d.getDate() + 1) + "----" + d.setDate(d.getDate() + 1));
             */
 
+            //alert("from : " + "<?php echo $from?>" + "     " + new Date("<?php echo $from?> 00:00:00"));
 
-            //alert("from : " + "<?=$from?>" + "     " + new Date("<?=$from?> 00:00:00"));
-
-            var dateArray = getDates(new Date("<?=$from?> 00:00:00"), (new Date("<?=$to?> 00:00:00")));
+            var dateArray = getDates(new Date("<?php echo $from?> 00:00:00"), (new Date("<?php echo $to?> 00:00:00")));
 
             //var dateArray = getDates(new Date(2016,07,24), (new Date(2016,07,30)));
 
             // Create our data table out of JSON data loaded from server.
-            var data = new google.visualization.DataTable(<?=$jsonTable3?>);
+            var data = new google.visualization.DataTable(<?php echo $jsonTable3?>);
             var options = {
                 title: 'My test graph3',
                 is3D: 'true',
@@ -673,12 +675,10 @@ if ($obj->errMsg != "") {
         google.load('visualization', '1', {'packages':['corechart','timeline']});
 
         // Set a callback to run when the Google Visualization API is loaded.
-
-        var from = "<?=$from?>";
-        var to = "<?=$to?>";
+        var from = "<?php echo $from?>";
+        var to = "<?php echo $to?>";
 
         google.setOnLoadCallback(function() { drawChartAgario(from,to); });
-
         function drawChartAgario(from,to) {
 
             Date.prototype.addHours = function(hours) {
@@ -709,18 +709,16 @@ if ($obj->errMsg != "") {
                 console.log("test33 "+ d);
                 console.log("test33 "+ d.addDays(1) + "----" + (d.getDate() + 1) + "----" + d.setDate(d.getDate() + 1));
             */
-
-            var dateArray = getDates(new Date("<?=$from?>"), (new Date("<?=$to?>")));
+            var dateArray = getDates(new Date("<?php echo $from?>"), (new Date("<?php echo $to?>")));
             //var dateArray = getDates(new Date(2016,07,24), (new Date(2016,07,30)));
 
             // Create our data table out of JSON data loaded from server.
-            var data = new google.visualization.DataTable(<?=$jsonTableAgarioAndOtherGames?>);
+            var data = new google.visualization.DataTable(<?php echo $jsonTableAgarioAndOtherGames?>);
             var options = {
                 title: 'Agar.io graph',
                 is3D: 'true',
                 width: 1000,
                 height: 400,
-
 
                 hAxis: {
                     //ticks: dateArray,
@@ -733,6 +731,8 @@ if ($obj->errMsg != "") {
             // Do not forget to check your div ID
             var chart = new google.visualization.AreaChart(document.getElementById('chart_agario'));
             chart.draw(data, options);
+/*debug
+debug*/
         }
     </script>
 
@@ -757,11 +757,12 @@ if ($obj->errMsg != "") {
                 ({{DetectionDiffInMin}} min)
                 <hr> <!--------------------------------------------------->
                 <b>event[1]: {{ eventsArray["1"] }} </b><br>
-                <b>backup P702: <span  ng-style="myStyleLastEvent('backup P702',eventsArray['backup P702'])"> {{ eventsArray["backup P702"] }} </span></b><br>
+                <b>backup P702    : <span  ng-style="myStyleLastEvent('backup P702',eventsArray['backup P702'])"> {{ eventsArray["backup P702"] }} </span></b><br>
                 <b>last getWindows: <span  ng-style="myStyleLastEvent('getWindowTitle mypc3',eventsArray['getWindowTitle mypc3'])"> {{ eventsArray["getWindowTitle mypc3"] }} </span></b><br>
             </td>
         </table>
         <hr> <!--------------------------------------------------->
+        Scope.hostFilter : {{hostFilter}} !!!!!!!!!!!!!!!!!!!!!!!<br>
         Scope.myPage2 : {{myPage2}}<br>
         URL : <span id="demo1"></span><br>
         pathArray : <span id="demo2"></span><br>
@@ -791,16 +792,21 @@ if ($obj->errMsg != "") {
             Database :
             <input type="radio" ng-model="dbhost" value="localhost">Localhost
             <input type="radio" ng-model="dbhost" value="192.168.0.2">192.168.0.2
-            <input type="radio" ng-model="dbhost" value="hp2560">hp2560
+            <input type="radio" ng-model="dbhost" value="192.168.0.147">192.168.0.147
+            <input type="radio" ng-model="dbhost" value="p702">p702
             <br>
             Nb recs:
             <input type="text" ng-model="nbrecs"><br>
-            Filter:
-            <input type="text" ng-model="filter"><br>
+            Host Filter:
+            <input type="text" ng-model="hostFilter"><br>
+            Title Filter:
+            <input type="text" ng-model="titleFilter"><br>
             <button ng-click="getResults()">Refresh</button>
         </form>
         <p>(<a href="{{myPage}}" target="_blank">{{myPage}}</a>)</p>
 
+        Scope.errMsg : {{errMsg}}<br>
+        
         <table>
             <tr ng-repeat="x in fgw">
                 <td>{{ x.date }}</td>
@@ -829,13 +835,13 @@ if ($obj->errMsg != "") {
         <div id="chart_div3">
         </div>
         <br>
-
         <p>My Agario & Co chart (<a href="<?=$myPageAgarioAndOtherGames?>" target="_blank"><?=$myPageAgarioAndOtherGames?></a>)</p>
         <div id="chart_agario">
         this is a placeholder
         </div>
         <br>
-
+<!--
+-->
     </body>
 </html>
 
