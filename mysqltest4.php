@@ -5,6 +5,8 @@ test
  */
 
 echo 'Version PHP courante : ' . phpversion() . "<br>";
+echo "server : ". $_SERVER['SERVER_NAME'];
+
 include 'params.php';
     
 
@@ -320,7 +322,10 @@ $toAgar = $toDateAgar->format('Y-m-d');
 $inTitleList = urlencode('"Agar Private Server Agario Game Play Agario - Google Chrome","Agar.io - Google Chrome","slither.io - Google Chrome","diep.io - Google Chrome","space1.io - Google Chrome"');
 $to = urlencode($to);
 
-$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
+//$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
+
+$thisServer = $_SERVER['SERVER_NAME'];
+$myPageAgarioAndOtherGames = "http://" . $thisServer . "/monitor/getWindowResult.php" .
     "?from='" . $fromAgar . "'" .
     "&to='" . $toAgar . "'" .
     "&inTitleList=" . $inTitleList .
@@ -365,7 +370,7 @@ if ($obj->errMsg != "") {
     //echo "formatGraphData  : \n<br>";
     //echo json_encode(formatGraphData($GGdata))."\n<br>";
 
-    $jsonTableAgarioAndOtherGames = json_encode(formatGraphData($GGdata, "Duration"));
+    $jsonTableAgarioAndOtherGames = json_encode(formatGraphData($GGdata, "Duration (Mins)"));
     //echo "formatGraphData3  : \n<br>";
     //echo $jsonTableAgarioAndOtherGames."\n<br>";
 
@@ -494,7 +499,8 @@ if ($obj->errMsg != "") {
                 return $filter('date')($fromDate,'yyyy-MM-dd');
             }
             $scope.getResults = function() {
-                $scope.myPage = "http://"+webserver+"/monitor/getWindowResult.php" +
+                //$scope.myPage = "http://"+webserver+"/monitor/getWindowResult.php" +
+                $scope.myPage = "getWindowResult.php" +
                 "?from='" + $scope.convStrToDate($scope.from) + "'" +
                 //"?from='" + $titleFilter('date')($scope.fromDate,'yyyy-MM-dd') + "'" +
                 "&to='"+ $scope.to + "'" +
@@ -523,7 +529,8 @@ if ($obj->errMsg != "") {
             $scope.getResults();
 
             $scope.getLastTemp = function() {
-                $scope.myPage2 = "http://"+webserver+"/monitor/getLastEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
+                //$scope.myPage2 = "http://"+webserver+"/monitor/getLastEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
+                $scope.myPage2 = "getLastEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
                 console.log("myURL36:"+$scope.myPage2);
                 $http.get($scope.myPage2)
                 .then(
@@ -539,7 +546,8 @@ if ($obj->errMsg != "") {
                 });
             }
             $scope.getLastEvent = function($myArray,$type) {
-                $myURL = "http://"+webserver+"/monitor/getLastEvent.php?type="+$type;
+                //$myURL = "http://"+webserver+"/monitor/getLastEvent.php?type="+$type;
+                $myURL = "getLastEvent.php?type="+$type;
                 //alert($myURL);
                 console.log("myURL37:"+$myURL);
                 $http.get($myURL)
