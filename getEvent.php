@@ -21,7 +21,11 @@ Note : mysql_* deprecated ! use MySQLi instead
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-//echo urldecode($_SERVER['REQUEST_URI']);
+$URI = urldecode($_SERVER['REQUEST_URI']);
+$myPost = $_POST;
+$myGet = $_GET;
+
+//echo $URI;
 
 
 $defaultTimeZone='UTC';
@@ -187,6 +191,18 @@ function addEvent($time, $host, $text, $type, $dbhost) {
     return $errMsg;
 }
 
+//==========================================================================================================================
+function getParam($paramName, $defaultValueStr) {
+    $paramValue = "";
+
+    if (isset($_GET[$paramName])) { $paramValue = $paramValue . $_GET[$paramName]; }
+    if (isset($_POST[$paramName])) { $paramValue = $paramValue . $_POST[$paramName]; }
+
+    if ($paramValue == "") {
+        $paramValue = $defaultValueStr;
+    }
+    return $paramValue;    
+}
 
 //==========================================================================================================================
 //==========================================================================================================================
@@ -194,9 +210,16 @@ function addEvent($time, $host, $text, $type, $dbhost) {
 
 $currTime = _date("Y-m-d H:i:s", false, 'Europe/Paris');
 
-$eventFct = "(no Fct specified)";
-if(isset($_GET['eventFct'])) { $eventFct = $_GET['eventFct']; }
 
+$eventFct = getParam("eventFct", "(no Fct specified)");
+$host = getParam("host", "(no host specified)");
+$text = getParam("text", "(no text specified)");
+$type = getParam("type", "(no type specified)");
+$dbhost = getParam("dbhost", "192.168.0.147");
+
+//$eventFct = "(no Fct specified)";
+//if (isset($_GET['eventFct']) OR isset($_POST['eventFct']) ) { $eventFct = $_GET['eventFct'] + $_POST['eventFct']; }
+/*
 $host = "(no host specified)";
 if(isset($_GET['host'])) { $host = $_GET['host']; }
 
@@ -208,6 +231,7 @@ if(isset($_GET['type'])) { $type = $_GET['type']; }
 
 $dbhost = "192.168.0.147";
 if(isset($_GET['dbhost'])) { $dbhost = $_GET['dbhost']; }
+*/
 
 //echo "eventFct : ".$eventFct."\n";
 
@@ -223,7 +247,12 @@ if ($eventFct == "mockup") {
     $myArray = getEvent($eventFct, $type, $dbhost);
     //echo json_encode(getEvent($eventFct,$type, $dbhost));
 } else {
-    $myArray = array('errMsg' => "!!!! not a known function : " . $eventFct, 'recordsArray' => array());
+    $myArray = array('errMsg' => 
+        '!!!! not a known function: ' . $eventFct . 
+        ' URI : ' . $URI . 
+        ' myGet : ' . json_encode($myGet) . 
+        ' myPost : ' . json_encode($myPost), 
+        'recordsArray' => array());
 }
 
 $errMsg = $myArray['errMsg'];

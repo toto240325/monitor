@@ -3,19 +3,40 @@
 """
 This module get the temperature of the cpu and...
 
-""""
-import pcd8544.lcd as lcd
+"""
 import requests
 import os
-import RPi.GPIO as GPIO
 import time
 import datetime
 import subprocess
 import re  
-import picamera
 import json
 import threading
 import sys
+import socket
+
+
+# to add a record : http://192.168.0.147/monitor/getEvent.php?eventFct=add&time="2018-01-16"&host=myHost&text="my text"&type="my type"
+
+datetime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+hostName = socket.gethostname()
+
+myData = {
+	'eventFct' : 'add', 
+	'time' : datetime_str,
+	'host' : hostName,
+	'text' : '55.99', 
+	'type' : 'temperature'
+}
+
+
+#	log_txt':'detected ! (Raspberry)',\
+#			'log_temp' : temp, 'add' : 1}
+
+r = requests.post("http://localhost/monitor/getEvent.php", data=myData)
+print (r.content)
+
+
 
 """
 #phpServer="http://toto240325.eu.pn/test/"
@@ -298,10 +319,6 @@ while True:
 		print "ReadTimeout Exception !"
 		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		
-	"""
-
-
-	"""
 	except Exception as e:
 		print "!!!!!!!! Exception !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		print type(e)     # the exception instance
