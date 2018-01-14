@@ -74,7 +74,7 @@ class Fgw
 }
 
 //========================================================================================
-function getDetails($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
+function getDetailsObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
 
 {
     $fgwArray = array();
@@ -137,7 +137,7 @@ function getDetails($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
 }
 
 //========================================================================================
-function getSummary($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
+function getSummaryObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
 {
     $fgwArray = array();
     $errMsg = "";
@@ -195,7 +195,7 @@ function getSummary($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
 }
 
 //========================================================================================
-function getDailySummary($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs, $order)
+function getDailySummaryObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs, $order)
 {
 
     $fgwArray = array();
@@ -261,7 +261,7 @@ function getDailySummary($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs
 }
 
 //========================================================================================
-function getDailySummaryTotal($from, $to, $hostFilter, $inTitleList, $dbhost, $nbrecs, $order)
+function getDailySummaryTotalObsolete($from, $to, $hostFilter, $inTitleList, $dbhost, $nbrecs, $order)
 {
 
     $errMsg = "";
@@ -384,25 +384,24 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
     //echo $query."<br>\n";
 
     include 'connect-db.php';
-
     $conn = new mysqli($dbhost, $dbuser, $dbpass, $mydb);
     if ($conn->connect_error) {
-        echo 'Server error. Please try again sometime. CON';
-        $errMsg = 'Server error. Please try again sometime. dbhost :' . $dbhost . "  mydb:" . $mydb;
+        $errMsg = 'Server error in connection. Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
+        //echo $errMsg;
         return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
     }
-    $result = $conn->query($query);
 
+    $result = $conn->query($query);
     if (!$result) {
-        $errMsg = "db error : $conn->error";
-        die("problem : " . $conn->error);
-    } else {
-        //echo "connection OK !";
+        $errMsg = 'Server error in query. Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
+        //echo $errMsg;
+        return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
     }
 
     if (!$conn->set_charset("utf8")) {
-        $errMsg = "db error : $conn->error";
-        die("problem : " . $conn->error);
+        $errMsg = 'Server error in setting charset : '. $conn->error . 'Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
+        //echo $errMsg;
+        return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
     }
 
     if ($result->num_rows > 0) {
@@ -410,7 +409,7 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
         // output data of each row
         while ($row = $result->fetch_assoc()) {
             switch ($fgwFunction) {
-                case "details":
+            case "details":
                 $time = $row["fgw_time"];
                 $host = $row["fgw_host"];
                 $title = $row["fgw_title"];
@@ -608,3 +607,4 @@ $outp = $outp . ',"to":"' . $to . '"';
 $outp = $outp . '}';
 echo $outp;
 
+?>
