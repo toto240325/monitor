@@ -33,6 +33,7 @@ myData = {
 #	log_txt':'detected ! (Raspberry)',\
 #			'log_temp' : temp, 'add' : 1}
 
+print (myData)
 r = requests.post("http://localhost/monitor/getEvent.php", data=myData)
 print (r.content)
 
