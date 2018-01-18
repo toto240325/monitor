@@ -574,7 +574,8 @@ if ($obj->errMsg != "") {
 
             }
             $scope.getLastEventGetWindowTitleMypc3 = function($myArray,$type) {
-                $myURL = "http://"+webserver+"/monitor/getLastTimeWindowTitle.php";
+                //$myURL = "http://"+webserver+"/monitor/getLastTimeWindowTitle.php";
+                $myURL = "getLastTimeWindowTitle.php";
                 //alert("myurl 38 : " + $myURL);
                 console.log("myurl 38 : " + $myURL);
                 $http.get($myURL)

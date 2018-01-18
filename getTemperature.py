@@ -21,6 +21,15 @@ import socket
 datetime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 hostName = socket.gethostname()
 
+
+ostemp = os.popen('sensors').readline()
+temp = (ostemp.replace("temp=", "").replace("'C\n", ""))
+
+
+
+
+
+
 myData = {
 	'eventFct' : 'add', 
 	'time' : datetime_str,
@@ -36,6 +45,8 @@ myData = {
 print (myData)
 r = requests.post("http://localhost/monitor/getEvent.php", data=myData)
 print (r.content)
+
+
 
 
 
