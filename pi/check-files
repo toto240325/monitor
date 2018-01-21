@@ -1,0 +1,9 @@
+# move the avi files created by the pi detector to a place from where they can be sent to the monitor server
+# (moving the files to another place before sending them guarantees that you are not copying a file which is still 
+# being written to
+sudo mv /var/lib/motion/*.avi ~/monitor/avi/tosend/
+#copy the files on the monitor server
+cp ~/monitor/avi/tosend/* ~/temp/
+#move the already copied files to an archive location
+mv ~/monitor/avi/tosend/* ~/monitor/avi/sent/
+# rm *.jpg older than 1 week
