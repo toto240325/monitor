@@ -210,12 +210,13 @@ function getParam($paramName, $defaultValueStr) {
 
 $currTime = _date("Y-m-d H:i:s", false, 'Europe/Paris');
 
+include 'params.php';
+$dbhost = getParam("dbhost", $dbhost);
 
 $eventFct = getParam("eventFct", "(no Fct specified)");
 $host = getParam("host", "(no host specified)");
 $text = getParam("text", "(no text specified)");
 $type = getParam("type", "(no type specified)");
-$dbhost = getParam("dbhost", "192.168.0.147");
 
 //$eventFct = "(no Fct specified)";
 //if (isset($_GET['eventFct']) OR isset($_POST['eventFct']) ) { $eventFct = $_GET['eventFct'] + $_POST['eventFct']; }
