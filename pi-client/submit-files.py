@@ -21,6 +21,7 @@ import threading
 import sys
 import requests
 
+import params
 
 def unescape(s):
     s = s.replace("&lt;", "<")
@@ -120,16 +121,15 @@ requestTimeout = 1000 	# timeout for requests
 phpServer = "http://192.168.0.147/monitor/"
 
 myHostname = socket.gethostname()
+
+# definition of aviFolder, tmpFolder, archivedfolder depending on environment
+import params
+
+(aviFolder,tmpFolder,archivedFolder) = params.params()
+
 if myHostname == "L02DI1453375DIT":
-    aviFolder = "C:\\Users\\derruer\\mydata\\projects\\htdocs\\monitor\\pi-client\\avi\\"
-    tmpFolder = "C:\\Users\\derruer\\mydata\\projects\\htdocs\\monitor\\pi-client\\avi-temp\\"
-    archivedFolder = "C:\\Users\\derruer\\mydata\\projects\\htdocs\\monitor\\pi-client\\avi-archived\\"
     currDir = os.popen('echo %cd%').readline()
 elif myHostname == "raspberrypi4":
-    #aviFolder = "/var/lib/motion/"
-    aviFolder = "/home/pi/avi-test/"
-    tmpFolder = "/home/pi/avi-tmp/"
-    archivedFolder = "/home/pi/avi-archive/"
     currDir = os.popen('pwd').readline()
 
 print('"current directory : ' + currDir)
@@ -143,7 +143,6 @@ print ("now : " + str(now1))
 print ("starting")
 
 tempC = []
-
 
 try:
 
