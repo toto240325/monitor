@@ -8,11 +8,12 @@ Output example :
 {"id":"63","time":"2017-11-22 22:07:56","host":"mypc3","text":"backup p702 to googleDrive via mypc3","type":"backup p702"}
 
 Examples : 
-http://localhost/monitor/getEvent.php?eventFct=getLastEvenByType&type="backup p702"
-http://localhost/monitor/getEvent.php?eventFct=add&time="2018-01-16"&host=myHost&text="my text"&type="my type"
+http://localhost/monitor/getEvent.php?eventFct=getLastEventByType&type=uploading+file
+http://192.168.0.147/monitor/getEvent.php?eventFct=getLastEventByType&type=backup+P702
+http://localhost/monitor/getEvent.php?eventFct=add&time="2018-01-16"&host=myHost&text=my+text&type=my+type
 
 Mockup : (no database connection) 
-http://192.168.0.147/monitor/getEvent.php?type="mockup"
+http://192.168.0.147/monitor/getEvent.php?type=mockup
 
 Note : mysql_* deprecated ! use MySQLi instead
 
@@ -91,7 +92,7 @@ function getEvent($eventFct, $type, $dbhost) {
             break;
     }
     
-    //echo $query;
+    #echo $query;
 
     include 'connect-db.php';
     $conn = new mysqli($dbhost,$dbuser,$dbpass,$mydb);
