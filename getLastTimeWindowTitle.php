@@ -3,7 +3,7 @@
     This function returns in json an array containing all the detection times between two dates
     to test it :
     
-    http://192.168.0.2/test/getLastTimeWindowTitle.php
+    http://192.168.0.147/monitor/getLastTimeWindowTitle.php
                     
     Should return something like this : 
     
