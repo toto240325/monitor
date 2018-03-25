@@ -58,7 +58,7 @@
         
         $conn = mysqli_connect($dbhost, $dbuser, $dbpass,$mydb);
         
-        $query = "SELECT id, name, content, type, upload_time, size, PIR_detection, ultrasonic_detection FROM upload order by upload_time desc,type limit 20";
+        $query = "SELECT id, name, content, type, upload_time, size, PIR_detection, ultrasonic_detection FROM upload order by upload_time desc,type limit 30";
         $result = mysqli_query( $conn, $query ) or die('Error, query failed');
         
         if(mysqli_num_rows($result) == 0)
