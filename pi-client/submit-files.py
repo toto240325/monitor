@@ -82,7 +82,7 @@ def post_file_old(fileName, datetime_str, fileType, PIR_detection, ultrasonic_de
     r = requests.post(url, files=files, data=data, timeout=requestTimeout)
     #print ("content " + unescape((r.content).decode("ascii")))
     
-    text = r.content[:100000].decode('utf-8')
+    #text = r.content[:100000].decode('utf-8')
     #print(text)
     #print_r("content : " + (r.content))
     #print ("--> post_file " + fileName + " " + datetime_str + " finished on " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
@@ -104,7 +104,7 @@ def moveFiles(src,dst) :
         
 def movefiles2(src,dst) :
     import glob
-    for file in glob.glob(srcr+"*.*"):
+    for file in glob.glob(src+"*.*"):
         print("moving "+file)
         shutil.move(file, dst)
 
@@ -139,7 +139,7 @@ time_str = time.strftime("%H:%M:%S", time.localtime())
 datetime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 print(time_str)
 print("myHostname : "+myHostname)
-print ("now : " + str(now1))
+print ("now : " + datetime_str)
 print ("starting")
 
 tempC = []
@@ -151,8 +151,9 @@ try:
 
     #post each file in the tmp area to the server then move it to the archived area
     files = os.listdir(tmpFolder)
-    files.sort()
+    files.sort(key=lambda x:os.path.getmtime(tmpFolder+x))
     for f in files:       
+        #print("file : %s" % f)
         t = os.path.getmtime(tmpFolder+f)
         dt = datetime.datetime.fromtimestamp(t)
         datetime_str = dt.strftime('%Y-%m-%d %H:%M:%S')
