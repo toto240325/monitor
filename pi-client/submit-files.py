@@ -151,13 +151,15 @@ try:
         shutil.move(tmpFolder + f, archivedFolder + f)
 
     
-    datetime_str = dt.strftime('%Y-%m-%d %H:%M:%S')
-    temp = "99.9"
+    datetime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    if myHostname == "L02DI1453375DIT":
+        temp = "99.9"
+    elif myHostname == "raspberrypi4":        
+        ostemp = os.popen('sudo vcgencmd measure_temp').readline()
+        temp = (ostemp.replace("temp=", "").replace("'C\n", ""))   
     
-    ostemp = os.popen('sudo vcgencmd measure_temp').readline()
-    temp = (ostemp.replace("temp=", "").replace("'C\n", ""))   
     myData = {'eventFct' : 'add', 'time':datetime_str, 'host' : myHostname, 'text' : temp,'type' : 'temp'}
-    print("Posting temp  info on "+datetime_str)
+    print("Posting temp info on "+datetime_str)
     r = requests.post(phpServer+"getEvent.php", data=myData, timeout=requestTimeout)
     print('status and reason : ', r.status_code, r.reason)
     print('r.text :', r.text[:900] + '...')
