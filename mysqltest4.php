@@ -323,7 +323,15 @@ $toAgar = $toDateAgar->format('Y-m-d');
 
 //----------------------------------------------------------------------------------
 // getting the data related to all the different games
-$inTitleList = urlencode('"Agar Private Server Agario Game Play Agario - Google Chrome","Agar.io - Google Chrome","slither.io - Google Chrome","diep.io - Google Chrome","space1.io - Google Chrome"');
+$inTitleList = urlencode('
+    "Agar Private Server Agario Game Play Agario - Google Chrome",
+    "ZombsRoyale.io | Play ZombsRoyale.io for free on Iogames.space! - Google Chrome",
+    "Surviv.io | Play Surviv.io for free on Iogames.space! - Google Chrome	",
+    "Agar.io - Google Chrome",
+    "slither.io - Google Chrome",
+    "diep.io - Google Chrome",
+    "space1.io - Google Chrome"
+    ');
 $to = urlencode($to);
 
 //$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
