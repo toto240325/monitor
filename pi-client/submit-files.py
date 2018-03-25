@@ -2,11 +2,11 @@
 # this script takes the file found in ~/monitor/avi/tosend and posts them on a webserver (where it will be put in a database)
 #
 #
-# # to test requests.post : 
+# # to test requests.post :
 #url = 'http://httpbin.org/post'
 #files = {'file': ('test.txt', open('test.txt', 'rb'), 'text/text', {'Expires': '0'})}
 #r = requests.post(url, files=files)
-#print(r.text)
+# print(r.text)
 
 import os
 import shutil
@@ -15,13 +15,14 @@ import time
 import datetime
 import re
 import subprocess
-import re  
+import re
 import json
 import threading
 import sys
 import requests
 
 import params
+
 
 def unescape(s):
     s = s.replace("&lt;", "<")
@@ -31,29 +32,31 @@ def unescape(s):
     s = s.replace("&amp;", "&")
     return s
 
-def dweet(rqsString):			
+
+def dweet(rqsString):
     rqs = requests.get(rqsString)
-    #print(rqs)
-    #print rqs.status_code
-    #print rqs.headers
-    #print rqs.content
+    # print(rqs)
+    # print rqs.status_code
+    # print rqs.headers
+    # print rqs.content
     print("--> dweeted " + rqsString)
     print("    finished on " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
 
-def post_file(fileName, datetime_str, fileType):
+def post_file(camera, folder, fileName, datetime_str, fileType):
     #print("==start post_file==================================================================")
-    url = phpServer+'upload_file.php'
-    fileSize = os.path.getsize(fileName)
-    
+    url = phpServer + 'upload_file.php'
+    fileSize = os.path.getsize(folder + fileName)
+
     #print("post_file : datetime str : " + datetime_str + " filename : " + filename + " size: " + str(size))
-    
-    myData = {'fileName' : fileName, 'fileSize' : fileSize, 'fileType' : fileType, 'upload_time' : datetime_str }
+
+    myData = {'camera': camera, 'fileName': fileName, 'fileSize': fileSize,
+              'fileType': fileType, 'upload_time': datetime_str}
     data = {'fileName': fileName, 'data': json.dumps(myData)}
-    files = {'file': (fileName, open(fileName, 'rb'),  fileType, {'Expires': '0'})}
+    files = {'file': (fileName, open(folder + fileName, 'rb'),
+                      fileType, {'Expires': '0'})}
     r = requests.post(url, files=files, data=data, timeout=requestTimeout)
-   
-    
+
     #myData1 = {'upload_time' : datetime_str, 'PIR_detection' : 0, 'ultrasonic_detection' : 0}
     #data = {'filename': filename, 'data': json.dumps(myData1)}
     #files = {'file': (filename, open(filename, 'rb'), filetype, {'Expires': '0'})}
@@ -71,42 +74,19 @@ def post_file(fileName, datetime_str, fileType):
     return(resultCode, resultReason, resultText)
 
 
-def post_file_old(fileName, datetime_str, fileType, PIR_detection, ultrasonic_detection):
-    #print("==start post_file==================================================================")
-    url = phpServer+'upload_file.php'
-    fileSize = os.path.getsize(fileName)
-    #print("post_file : datetime str : " + datetime_str + " fileName : " + fileName + " size: " + str(fileSize))
-    myData = {'fileName' : fileName, 'fileSize' : fileSize, 'fileType' : fileType, 'upload_time' : datetime_str, 'PIR_detection' : PIR_detection, 'ultrasonic_detection' : ultrasonic_detection}
-    data = {'filename': fileName, 'data': json.dumps(myData)}
-    files = {'file': (fileName, open(fileName, 'rb'),  fileType, {'Expires': '0'})}
-    r = requests.post(url, files=files, data=data, timeout=requestTimeout)
-    #print ("content " + unescape((r.content).decode("ascii")))
-    
-    #text = r.content[:100000].decode('utf-8')
-    #print(text)
-    #print_r("content : " + (r.content))
-    #print ("--> post_file " + fileName + " " + datetime_str + " finished on " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-    #print("==end post_file==================================================================")
-    
-    """
-    file = open("C:\\Users\\derruer\\mydata\\mytemp\\a.html","w") 
-    datetime_str=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    file.write("test on "+datetime_str) 
-    file.write((r.content).decode("utf-8"))
-    file.close() 
-    """
-
-def moveFiles(src,dst) :
+def moveFiles(src, dst):
     files = os.listdir(src)
     files.sort()
     for f in files:
-        shutil.move(src+f,dst+f)
-        
-def movefiles2(src,dst) :
+        shutil.move(src + f, dst + f)
+
+
+def movefiles2(src, dst):
     import glob
-    for file in glob.glob(src+"*.*"):
-        print("moving "+file)
+    for file in glob.glob(src + "*.*"):
+        print("moving " + file)
         shutil.move(file, dst)
+
 
 """
 print "Starting (to check the output : "
@@ -119,53 +99,56 @@ k = 0
 requestTimeout = 1000 	# timeout for requests
 
 phpServer = "http://192.168.0.147/monitor/"
+#phpServer = "http://localhost/monitor/"
 
 myHostname = socket.gethostname()
 
 # definition of aviFolder, tmpFolder, archivedfolder depending on environment
 import params
 
-(aviFolder,tmpFolder,archivedFolder) = params.params()
+(aviFolder, tmpFolder, archivedFolder) = params.params()
 
 if myHostname == "L02DI1453375DIT":
     currDir = os.popen('echo %cd%').readline()
 elif myHostname == "raspberrypi4":
     currDir = os.popen('pwd').readline()
 
-print("----------------------------"
+print("----------------------------")
 #print('"current directory : ' + currDir)
 #print ("python version : " + sys.version)
-now1=datetime.datetime.now()
+now1 = datetime.datetime.now()
 time_str = time.strftime("%H:%M:%S", time.localtime())
 datetime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-#print(time_str)
-print("myHostname : "+myHostname)
-print ("now : " + datetime_str)
-print ("starting")
+# print(time_str)
+print("myHostname : " + myHostname)
+print("now : " + datetime_str)
+print("starting")
 
 tempC = []
 
 try:
 
-    #copy all video files in a temp directory so that we are sure none of them is still being written to
-    moveFiles(aviFolder,tmpFolder)
+    # copy all video files in a temp directory so that we are sure none of them is still being written to
+    moveFiles(aviFolder, tmpFolder)
 
-    #post each file in the tmp area to the server then move it to the archived area
+    # post each file in the tmp area to the server then move it to the archived area
     files = os.listdir(tmpFolder)
-    files.sort(key=lambda x:os.path.getmtime(tmpFolder+x))
-    for f in files:       
+    files.sort(key=lambda x: os.path.getmtime(tmpFolder + x))
+    for f in files:
         #print("file : %s" % f)
-        t = os.path.getmtime(tmpFolder+f)
+        t = os.path.getmtime(tmpFolder + f)
         dt = datetime.datetime.fromtimestamp(t)
         datetime_str = dt.strftime('%Y-%m-%d %H:%M:%S')
-
-        (resultCode, resultReason, resultText) = post_file(tmpFolder+f, datetime_str, 'video/mp4')
+        filename, ext = os.path.splitext(f)
+        filetype = "video/mp4" if ext in ('.mp4', '.avi') else 'jpg'
+        (resultCode, resultReason, resultText) = post_file(
+            myHostname, tmpFolder, f, datetime_str, filetype)
         if (resultCode == 0):
-                print("file uploaded : %s (date : %s)" % (f,datetime_str))
+            print("file uploaded : %s (date : %s)" % (f, datetime_str))
         else:
-            print("file upload error : %s (code : %d, reason : %s)" % (f,resultCode, resultReason))
-        shutil.move(tmpFolder+f,archivedFolder+f)
-
+            print("file upload error : %s (code : %d, reason : %s)" %
+                  (f, resultCode, resultReason))
+        shutil.move(tmpFolder + f, archivedFolder + f)
 
     '''
     #ostemp = os.popen('vcgencmd measure_temp').readline()
@@ -206,7 +189,7 @@ try:
     t4=threading.Thread(target=dweet, args=(rqsString,))
     t4.start()
     """
-        
+
 except requests.exceptions.ConnectionError as e:
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     print("ConnectionError Exception !")
@@ -218,13 +201,13 @@ except requests.exceptions.ConnectionError as e:
     template = "An exception of type {0} occured. Arguments:\n{1!r}"
     message = template.format(type(e).__name__, e.args)
     print(message)
-    print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")      
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 except requests.exceptions.ReadTimeout:
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     print("ReadTimeout Exception !")
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    
+
 """
 except Exception as e:
     print "!!!!!!!! Exception !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
@@ -238,7 +221,3 @@ except Exception as e:
     #print message
     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 """
-
-
-    
-    

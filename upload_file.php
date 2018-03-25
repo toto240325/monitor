@@ -42,6 +42,7 @@ if (isset($_POST['data'])) {
     //    echo ($myData->type."\n");
 
     $manage = (array) json_decode($myData);
+    $camera = $manage['camera'];
     $upload_time = $manage['upload_time'];
     $PIR_detection = $manage['PIR_detection'];
     $ultrasonic_detection = $manage['ultrasonic_detection'];
@@ -90,8 +91,8 @@ if (($_FILES['file']['size'] > 0) && ($_FILES['file']['size'] < 1000000000)) // 
         echo "connection OK\n";
     }
 
-    $query = "INSERT INTO upload (name, size, type, content, upload_time, PIR_detection, ultrasonic_detection ) " .
-        "VALUES ('$fileName', '$fileSize', '$fileType', '$content', '$upload_time', '$PIR_detection', '$ultrasonic_detection')";
+    $query = "INSERT INTO upload (camera, name, size, type, content, upload_time, PIR_detection, ultrasonic_detection ) " .
+        "VALUES ('$camera', '$fileName', '$fileSize', '$fileType', '$content', '$upload_time', '$PIR_detection', '$ultrasonic_detection')";
 
     //    print_r ($query);
 
