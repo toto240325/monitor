@@ -27,7 +27,7 @@
         echo "<h1>Pictures of Loki eating</h1>";
         echo "<a href='index.html'>Back to menu</a><p>";
         
-        echo "dirname : " . dirname("c:/users/derruer/") . PHP_EOL;
+        //echo "dirname : " . dirname("c:/users/derruer/") . PHP_EOL;
 
         //echo "display_startup_errors : ";
         //echo var_dump(ini_get('display_startup_errors'));
@@ -35,7 +35,7 @@
         //echo "<br>log_errors : ";
         //echo var_dump(ini_get('log_errors'));
         
-        $hosting = 'p702';
+        //$hosting = 'p702';
 
         function getParam($paramName, $defaultValueStr) {
             $paramValue = "";
@@ -58,7 +58,7 @@
         
         $conn = mysqli_connect($dbhost, $dbuser, $dbpass,$mydb);
         
-        $query = "SELECT id, name, content, type, upload_time, size, PIR_detection, ultrasonic_detection FROM upload order by upload_time desc,type limit 30";
+        $query = "SELECT id, camera, name, content, type, upload_time, size, PIR_detection, ultrasonic_detection FROM upload order by upload_time desc,type limit 30";
         $result = mysqli_query( $conn, $query ) or die('Error, query failed');
         
         if(mysqli_num_rows($result) == 0)
@@ -79,6 +79,7 @@
             {
                 $i+=1;
                 $id = $row['id'];
+                $camera = $row['camera'];
                 $name = $row['name'];
                 $content = $row['content'];
                 $upload_time = $row['upload_time'];
@@ -103,11 +104,12 @@
                 
                 echo "<td>";
                 
-                echo "id = ".$id." and name=".$name." and size=".$size." and PIR_detection=".$PIR_detection."<p>";
+                echo "id = ".$id." and camera=".$camera." and name=".$name." and type=".$type." and size=".$size." and PIR_detection=".$PIR_detection."<p>";
                 //echo "type = ".$type
                 echo "upload_time = ".$upload_time."<p>";
                 
-                if ($name == "video.mp4") 
+                //if ($name == "video.mp4") 
+                if ($type == "video/mp4") 
                 {
                     
                     /*

@@ -98,8 +98,8 @@ sys.stderr = open('/home/pi/logs/pirtest.log', 'w+')
 k = 0
 requestTimeout = 1000 	# timeout for requests
 
-phpServer = "http://192.168.0.147/monitor/"
-#phpServer = "http://localhost/monitor/"
+#phpServer = "http://192.168.0.147/monitor/"
+phpServer = "http://localhost/monitor/"
 
 myHostname = socket.gethostname()
 
