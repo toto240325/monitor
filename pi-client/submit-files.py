@@ -140,7 +140,7 @@ try:
         dt = datetime.datetime.fromtimestamp(t)
         datetime_str = dt.strftime('%Y-%m-%d %H:%M:%S')
         filename, ext = os.path.splitext(f)
-        filetype = "video/mp4" if ext in ('.mp4', '.avi') else 'jpg'
+        filetype = "video/mp4" if ext in ('.mp4', '.avi') else 'image/jpg'
         (resultCode, resultReason, resultText) = post_file(
             myHostname, tmpFolder, f, datetime_str, filetype)
         if (resultCode == 0):
@@ -150,30 +150,18 @@ try:
                   (f, resultCode, resultReason))
         shutil.move(tmpFolder + f, archivedFolder + f)
 
-    '''
-    #ostemp = os.popen('vcgencmd measure_temp').readline()
-    #temp = (ostemp.replace("temp=", "").replace("'C\n", ""))
-    temp = "99.99"
-
-    # post the captured files on the cloud
-    #(resultCode, resultReason, resultText) = post_file(aviFolder+"pict.jpg", datetime_str, 'image/jpg')
-    (resultCode, resultReason, resultText) = post_file(aviFolder+"video.mp4", datetime_str, 'video/mp4')
-
-    print("resultCode : %3d" % resultCode)
-    print("resultReason : " + resultReason)
-    print("resultText : " + resultText)
-
-
-    #t3 = threading.Thread(target=post_file, args=('video.mp4', datetime_str,'video/mp4',False, False))
-    #t3.start()
-
-    myData = {'eventFct' : 'add', 'time':'2018-01-22', 'host' : 'my host', 'text' : temp,'type' : 'uploading file'}
-
-    print("Posting detection info on "+datetime_str)
+    
+    datetime_str = dt.strftime('%Y-%m-%d %H:%M:%S')
+    temp = "99.9"
+    
+    ostemp = os.popen('sudo vcgencmd measure_temp').readline()
+    temp = (ostemp.replace("temp=", "").replace("'C\n", ""))   
+    myData = {'eventFct' : 'add', 'time':datetime_str, 'host' : myHostname, 'text' : temp,'type' : 'temp'}
+    print("Posting temp  info on "+datetime_str)
     r = requests.post(phpServer+"getEvent.php", data=myData, timeout=requestTimeout)
     print('status and reason : ', r.status_code, r.reason)
     print('r.text :', r.text[:900] + '...')
-    '''
+    
 
     """
     file = open("C:\\Users\\derruer\\mydata\\mytemp\\b.html","w")
