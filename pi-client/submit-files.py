@@ -132,12 +132,13 @@ if myHostname == "L02DI1453375DIT":
 elif myHostname == "raspberrypi4":
     currDir = os.popen('pwd').readline()
 
-print('"current directory : ' + currDir)
-print ("python version : " + sys.version)
+print("----------------------------"
+#print('"current directory : ' + currDir)
+#print ("python version : " + sys.version)
 now1=datetime.datetime.now()
 time_str = time.strftime("%H:%M:%S", time.localtime())
 datetime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-print(time_str)
+#print(time_str)
 print("myHostname : "+myHostname)
 print ("now : " + datetime_str)
 print ("starting")
