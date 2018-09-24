@@ -8,11 +8,28 @@ console.log ("test99");
 test
  */
 
-echo 'Version PHP courante : ' . phpversion() . "<br>";
+//echo 'Version PHP courante : ' . phpversion() . "<br>";
 $thisServer = $_SERVER['SERVER_NAME'];
-echo "server : $thisServer<br>";
+//echo "server : $thisServer<br>";
+
+/* 
+    params.php contains among others :
+    $webserver = "localhost";
+    $dbhost = "localhost";
+    $inTitleList = urlencode('
+        "Agar Private Server Agario Game Play Agario - Google Chrome",
+        "ZombsRoyale.io | Play ZombsRoyale.io for free on Iogames.space! - Google Chrome",
+        "Surviv.io | Play Surviv.io for free on Iogames.space! - Google Chrome	",
+        "Agar.io - Google Chrome",
+        "alis.io - Google Chrome",
+        "slither.io - Google Chrome",
+        "diep.io - Google Chrome",
+        "space1.io - Google Chrome"
+    ');
+*/
 
 include 'params.php';
+include 'getGamesTodayData.php';
 
 $defaultTimeZone = 'UTC';
 if (date_default_timezone_get() != $defaultTimeZone) {
@@ -118,7 +135,7 @@ input  : [{"datetime":"2016-09-14 00:00:00","nbDetections":"0"},{"datetime":"201
 output : [{"datetime":"2016-09-14 00:00:00","nbDetections":1},{"datetime":"2016-09-14 00:30:00","nbDetections":"0"},{"datetime":"2016-09-14 01:00:00","nbDetections":"0"}]
  */
 
- function completeGraphData($graphData, $timesArray, $period)
+function completeGraphData($graphData, $timesArray, $period)
 {
     //echo "graphdata as input : \n<br>".json_encode($graphData)."\n<br>";
     //echo "timesarray : \n<br>"; var_dump ($timesArray);
@@ -265,133 +282,204 @@ function formatGraphData($dataArray,$yAxisStr)
     return $graphData;
 }
 
-// prepare Loki Eating habits graph ------------------------------------------------------------------------------
+function getLokiGraphData()
+{
+    // prepare Loki Eating habits graph ------------------------------------------------------------------------------
 
-//$to = date('Y-m-d');
-//$fromDate = new DateTime($to);
-//$fromDate->modify('-4 day');
-//$from = $fromDate->format('Y-m-d');
-//echo "40 from - to : <br>";
-//echo $from." - ".$to."<br>";
+    //$to = date('Y-m-d');
+    //$fromDate = new DateTime($to);
+    //$fromDate->modify('-4 day');
+    //$from = $fromDate->format('Y-m-d');
+    //echo "40 from - to : <br>";
+    //echo $from." - ".$to."<br>";
 
-$fromDate = new DateTime(date('Y-m-d'));
-$fromDate->modify('-5 day');
-$from = $fromDate->format('Y-m-d');
+    $fromDate = new DateTime(date('Y-m-d'));
+    $fromDate->modify('-5 day');
+    $from = $fromDate->format('Y-m-d');
 
-$toDate = new DateTime(date('Y-m-d'));
-$toDate->modify('+1 day');
-$to = $toDate->format('Y-m-d');
+    $toDate = new DateTime(date('Y-m-d'));
+    $toDate->modify('+1 day');
+    $to = $toDate->format('Y-m-d');
 
-//======================================================================================
-//======================================================================================
-//======================================================================================
-
-$myFunc = "2";
-$period = 30;
-
-$mypage45 = "http://" . $webserver . "/loki/getDetectionTimes.php?myFunc=9&from='" . $from . "'&to='" . $to . "'&period=" . $period;
-//echo "my page 45 : ".$mypage45."<br>";
-$json = file_get_contents($mypage45);
-//echo "json7 :\n<br>"; var_dump($json);
-//echo "\n<br>-----------------------\n<br>";
-
-$obj = json_decode($json);
-//echo "count : ".count($obj->records)."<br>";
-$timesArray = $obj->records;
-$graphData = makeGraphDataFromDetections($from, $to, $period);
-//echo "\n timesArray 7 : \n"; var_dump($timesArray);
-$graphData = completeGraphData($graphData, $timesArray, $period);
-
-$GGdata = convertGraphDataToGoogleGraph($graphData);
-//echo "GGdata1 : \n<br>".json_encode($GGdata)."\n<br>";
-
-$jsonTable3 = json_encode(formatGraphData($GGdata, "temp"));
-
-// prepare Agario graph -----------------------------------------------------------------------------
-$fromDateAgar = new DateTime(date('Y-m-d'));
-$fromDateAgar->modify('-10 day');
-$fromAgar = $fromDateAgar->format('Y-m-d');
-
-$toDateAgar = new DateTime(date('Y-m-d'));
-$toDateAgar->modify('+1 day');
-$toAgar = $toDateAgar->format('Y-m-d');
-
-//$toAgar = ((new Datetime(date('Y-m-d')))->modify('+1 day'))->format('Y-m-d');
-//$to = $to." 23:59:59";
-//echo "from - to : <br>";
-//echo $from." - ".$to."<br>";
-
-//----------------------------------------------------------------------------------
-// getting the data related to all the different games
-$inTitleList = urlencode('
-    "Agar Private Server Agario Game Play Agario - Google Chrome",
-    "ZombsRoyale.io | Play ZombsRoyale.io for free on Iogames.space! - Google Chrome",
-    "Surviv.io | Play Surviv.io for free on Iogames.space! - Google Chrome	",
-    "Agar.io - Google Chrome",
-    "slither.io - Google Chrome",
-    "diep.io - Google Chrome",
-    "space1.io - Google Chrome"
-    ');
-$to = urlencode($to);
-
-//$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
-
-$myPageAgarioAndOtherGames = "http://" . $thisServer . "/monitor/getWindowResult.php" .
-    "?from='" . $fromAgar . "'" .
-    "&to='" . $toAgar . "'" .
-    "&inTitleList=" . $inTitleList .
-    "&dbhost=" . $dbhost .
-    "&nbrecs=100" .
-    "&order=date" .
-    "&myFunc=dailySummaryTotal";
-//echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>";
-
-//echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
-//echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
-echo "<script>";
-echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
-echo "</script>";
+    //======================================================================================
+    //======================================================================================
 
 
-//('mypage Agario2 : '".$myPageAgarioAndOtherGames);
-$json = file_get_contents($myPageAgarioAndOtherGames);
-//echo "json 34 : "."<br>";
-//print_r($json);
-//echo "test 34<br>\n"; var_dump($json);
-$obj = json_decode($json);
+    // prepare Loki graph ---------------------------------------------------------------------------
 
-if ($obj->errMsg != "") {
+    $myFunc = "2";
+    $period = 30;
 
-    echo "!!!!!!!!!!!!!!! Error getting data from mypc3 !!!!!!!! ";
+    $mypage45 = "http://" . $webserver . "/loki/getDetectionTimes.php?myFunc=9&from='" . $from . "'&to='" . $to . "'&period=" . $period;
+    //echo "my page 45 : ".$mypage45."<br>";
+    $json = file_get_contents($mypage45);
+    //echo "json7 :\n<br>"; var_dump($json);
+    //echo "\n<br>-----------------------\n<br>";
 
-} else {
+    $obj = json_decode($json);
     //echo "count : ".count($obj->records)."<br>";
-    //$timesArray = $obj->records;
+    $timesArray = $obj->records;
+    $graphData = makeGraphDataFromDetections($from, $to, $period);
+    //echo "\n timesArray 7 : \n"; var_dump($timesArray);
+    $graphData = completeGraphData($graphData, $timesArray, $period);
 
-    //echo json_encode($obj->records)."<br>";
+    $GGdata = convertGraphDataToGoogleGraph($graphData);
+    //echo "GGdata1 : \n<br>".json_encode($GGdata)."\n<br>";
 
-    //echo "<br>records 2 : ".json_encode($obj->records)."<br>";
-    $graphData = makeGraphDataFromAgario($obj->records);
-    //echo "<br>graphData2 : ".json_encode($graphData)."<br>";
-
-    //echo "graphData : ".json_encode($graphData)."<br>";
-    //echo "<br>";
-    //$graphData = json_decode('[{"datetime":"2016-09-14 00:00:00","nbDetections":1},{"datetime":"2016-09-15 00:30:00","nbDetections":"0"},{"datetime":"2016-09-16 01:00:00","nbDetections":"0"}]');
-    //$GGdata = convertGraphDataToGoogleGraph($graphData);
-    //echo "GGdata4 : \n<br>".json_encode($GGdata)."\n<br>";
-    //    $GGdata = json_decode('[{"x":"2016-09-14 00:00:00","y":1},{"x":"2016-09-15 00:30:00","y":7},{"x":"2016-09-16 01:00:00","y":10}]',true);
-
-    $GGdata = $graphData;
-
-    //echo "GCdata2 : \n<br>".json_encode($GGdata)."\n<br>";
-    //echo "formatGraphData  : \n<br>";
-    //echo json_encode(formatGraphData($GGdata))."\n<br>";
-
-    $jsonTableAgarioAndOtherGames = json_encode(formatGraphData($GGdata, "Duration (Mins)"));
-    //echo "formatGraphData3  : \n<br>";
-    //echo $jsonTableAgarioAndOtherGames."\n<br>";
-
+    return json_encode(formatGraphData($GGdata, "temp"));
 }
+
+
+function getGamesGraphData()
+{
+    global $dbhost;
+    global $thisServer;
+    global $inTitleList;
+    
+    // prepare Agario graph -----------------------------------------------------------------------------
+    $fromDateAgar = new DateTime(date('Y-m-d'));
+    $fromDateAgar->modify('-10 day');
+    $fromAgar = $fromDateAgar->format('Y-m-d');
+
+    $toDateAgar = new DateTime(date('Y-m-d'));
+    $toDateAgar->modify('+1 day');
+    $toAgar = $toDateAgar->format('Y-m-d');
+
+    //$toAgar = ((new Datetime(date('Y-m-d')))->modify('+1 day'))->format('Y-m-d');
+    //$to = $to." 23:59:59";
+    //echo "from - to : <br>";
+    //echo $from." - ".$to."<br>";
+
+    //$to = urlencode($to);
+    //echo $inTitleList;
+
+    //$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
+
+    $myPageAgarioAndOtherGames = "http://" . $thisServer . "/monitor/getWindowResult.php" .
+        "?from='" . $fromAgar . "'" .
+        "&to='" . $toAgar . "'" .
+        "&inTitleList=" . $inTitleList .
+        "&dbhost=" . $dbhost .
+        "&nbrecs=100" .
+        "&order=date" .
+        "&myFunc=dailySummaryTotal";
+
+    //echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>";
+    //echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
+    //echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
+    
+    
+    echo "<script>";
+    echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
+    echo "</script>";
+
+
+    //('mypage Agario2 : '".$myPageAgarioAndOtherGames);
+    $json = file_get_contents($myPageAgarioAndOtherGames);
+    //echo "json 34 : "."<br>";
+    //print_r($json);
+    //echo "test 34<br>\n"; var_dump($json);
+    $obj = json_decode($json);
+
+    if ($obj->errMsg != "") {
+
+        echo "!!!!!!!!!!!!!!! Error getting data from mypc3 !!!!!!!! ";
+
+    } else {
+        //echo "count : ".count($obj->records)."<br>";
+        //$timesArray = $obj->records;
+
+        //echo json_encode($obj->records)."<br>";
+
+        //echo "<br>records 2 : ".json_encode($obj->records)."<br>";
+        $graphData = makeGraphDataFromAgario($obj->records);
+        //echo "<br>graphData2 : ".json_encode($graphData)."<br>";
+
+        //echo "graphData : ".json_encode($graphData)."<br>";
+        //echo "<br>";
+        //$graphData = json_decode('[{"datetime":"2016-09-14 00:00:00","nbDetections":1},{"datetime":"2016-09-15 00:30:00","nbDetections":"0"},{"datetime":"2016-09-16 01:00:00","nbDetections":"0"}]');
+        //$GGdata = convertGraphDataToGoogleGraph($graphData);
+        //echo "GGdata4 : \n<br>".json_encode($GGdata)."\n<br>";
+        //    $GGdata = json_decode('[{"x":"2016-09-14 00:00:00","y":1},{"x":"2016-09-15 00:30:00","y":7},{"x":"2016-09-16 01:00:00","y":10}]',true);
+
+        $GGdata = $graphData;
+
+        //echo "GCdata2 : \n<br>".json_encode($GGdata)."\n<br>";
+        //echo "formatGraphData  : \n<br>";
+        //echo json_encode(formatGraphData($GGdata))."\n<br>";
+    }
+    return json_encode(formatGraphData($GGdata, "Duration (Mins)"));
+ 
+}
+
+
+
+function getGamesTodayData_obsolete()
+{
+    global $dbhost;
+    global $thisServer;
+    global $inTitleList;
+    
+    // prepare Agario graph -----------------------------------------------------------------------------
+    $fromDateAgar = new DateTime(date('Y-m-d'));
+    //$fromDateAgar->modify('-10 day');
+    $fromAgar = $fromDateAgar->format('Y-m-d');
+
+    $toDateAgar = new DateTime(date('Y-m-d'));
+    $toDateAgar->modify('+1 day');
+    $toAgar = $toDateAgar->format('Y-m-d');
+
+    //$toAgar = ((new Datetime(date('Y-m-d')))->modify('+1 day'))->format('Y-m-d');
+    //$to = $to." 23:59:59";
+    //echo "from - to : <br>";
+    //echo $from." - ".$to."<br>";
+
+    //$to = urlencode($to);
+    //echo $inTitleList;
+
+    //$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
+
+    $myPageAgarioAndOtherGames = "http://" . $thisServer . "/monitor/getWindowResult.php" .
+        "?from='" . $fromAgar . "'" .
+        "&to='" . $toAgar . "'" .
+        "&inTitleList=" . $inTitleList .
+        "&dbhost=" . $dbhost .
+        "&nbrecs=100" .
+        "&order=date" .
+        "&myFunc=dailySummaryTotal";
+
+    //echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>";
+    //echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
+    //echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
+    
+    
+    echo "<script>";
+    echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
+    echo "</script>";
+
+
+    //('mypage Agario2 : '".$myPageAgarioAndOtherGames);
+    $json = file_get_contents($myPageAgarioAndOtherGames);
+    //echo "json 123 : "."<br>";
+    //print_r($json)."\nb<br>";
+    //echo "test 34<br>\n"; var_dump($json);
+    return $json;     
+}
+
+$jsonTable3 = getLokiGraphData();
+
+$jsonTableAgarioAndOtherGames = getGamesGraphData();
+//echo "jsonTableAgarioAndOtherGames  : \n<br>";
+//echo $jsonTableAgarioAndOtherGames."\n<br>";
+
+$jsonGamesTodayData = getGamesTodayData();
+//echo "jsonGamesTodayData : \n<br>";
+//echo $jsonGamesTodayData."\n<br>";
+
+$obj = json_decode($jsonGamesTodayData);
+//echo "count : ".count($obj->records)."<br>";
+$durationGames = $obj->records[0]->duration;
+
 ?>
 
 <!--<!DOCTYPE html>
@@ -863,6 +951,8 @@ if ($obj->errMsg != "") {
         <div id="chart_agario">
         this is a placeholder
         </div>
+        <p>test : <?=$jsonGamesTodayData?>
+        <p>duration games today : <?=$durationGames?>
         <br>
 <!--
 -->

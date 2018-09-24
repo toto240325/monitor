@@ -7,6 +7,9 @@ to test it :
 dailySummary:
 http://192.168.0.2/monitor/getWindowResult.php?from='2017-11-16'&to='2017-11-27'&filter=Agar.io+-+Google+Chrome&dbhost=192.168.0.2&nbrecs=100&order=date&myFunc=dailySummary
 
+http://192.168.0.147/monitor/getWindowResult.php?from='2018-09-15'&to='2018-09-21'&filter=alis.io+-+Google+Chrome&dbhost=192.168.0.147&nbrecs=100&order=date&myFunc=dailySummary
+
+
 Should return something like this:
 {"records":[
 {"id":"","time":"2017-11-22","title":"Agar.io - Google Chrome","duration":"0"},
