@@ -77,6 +77,7 @@ class Fgw
 }
 
 //========================================================================================
+/*
 function getDetailsObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
 
 {
@@ -138,7 +139,7 @@ function getDetailsObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbr
     $conn->close();
     return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
 }
-
+*/
 //========================================================================================
 function getSummaryObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
 {
@@ -322,7 +323,7 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
     switch ($fgwFunction) {
     case "details" : 
         $query = "
-        SELECT fgw_time,fgw_host,fgw_title,fgw_duration,fgw_cpu
+        SELECT fgw_time,fgw_host,fgw_title,fgw_duration,fgw_cpu,fgw_isgame
         FROM fgw
         WHERE
         fgw_host like '%" . $hostFilter . "%' and
@@ -419,6 +420,7 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
                 if ($title == null) {$title = "";}
                 $duration = $row["fgw_duration"];
                 $cpu = $row["fgw_cpu"];
+                $isgame = $row["fgw_isgame"];
                 $myfgw = new Fgw("", $time, $host, utf8_encode($title), number_format(strval($duration), 0));
                 $fgwArray[] = $myfgw;
                 break;
@@ -600,7 +602,8 @@ $errMsg = $myArray['errMsg'];
 if ($errMsg == "") {
     $records = json_encode($myArray['fgwArray']);
 } else {
-    $records = "[]";
+    $records = '[{"duration":0}]';
+//    $records = "[]";
 }
 
 $outp = '{"records":' . $records;

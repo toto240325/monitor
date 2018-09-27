@@ -31,6 +31,8 @@ $thisServer = $_SERVER['SERVER_NAME'];
 include 'params.php';
 //include 'getGamesTodayData.php';
 
+echo "webserver: ".$webserver."\n";
+
 $defaultTimeZone = 'UTC';
 if (date_default_timezone_get() != $defaultTimeZone) {
     date_default_timezone_set($defaultTimeZone);
@@ -284,12 +286,14 @@ function formatGraphData($dataArray,$yAxisStr)
 
 function getLokiGraphData()
 {
+    global $webserver;
+
     // prepare Loki Eating habits graph ------------------------------------------------------------------------------
 
-    //$to = date('Y-m-d');
-    //$fromDate = new DateTime($to);
-    //$fromDate->modify('-4 day');
-    //$from = $fromDate->format('Y-m-d');
+    $to = date('Y-m-d');
+    $fromDate = new DateTime($to);
+    $fromDate->modify('-4 day');
+    $from = $fromDate->format('Y-m-d');
     //echo "40 from - to : <br>";
     //echo $from." - ".$to."<br>";
 

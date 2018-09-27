@@ -26,7 +26,7 @@ $URI = urldecode($_SERVER['REQUEST_URI']);
 $myPost = $_POST;
 $myGet = $_GET;
 
-//echo $URI;
+#echo $URI;
 
 
 $defaultTimeZone='UTC';

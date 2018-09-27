@@ -83,6 +83,7 @@ include 'params.php';
                 $scope.count++;
             }
 
+            $scope.playedTime = 0;
             $scope.i = 0;
             $scope.remainingTimeToPlay = "";
             $scope.nbMinToAdd = "15";
@@ -205,7 +206,7 @@ include 'params.php';
 
             $scope.getGameTimeExceptionallyAllowedToday = function() {
                 $myURL = "getGameTimeExceptionallyAllowedToday.php";
-                console.log("myurl 138 : " + $myURL);
+                //console.log("myurl 1381 : " + $myURL);
                 $http.get($myURL)
                 .then(
                 function(response) {
@@ -224,10 +225,11 @@ include 'params.php';
             getPlayedTime = function() {
                 $scope.i = parseInt($scope.i) + 1;
                 $myURL = "getGamesTodayData.php";
-                //console.log("myurl 138 : " + $myURL);
+                //console.log("myurl 199 : " + $myURL);
                 $http.get($myURL)
                 .then(
                 function(response) {
+                    //console.log(response.data.records[0]);
                     $scope.playedTime = response.data.records[0].duration;
                 },
                 function(failure) {
@@ -277,6 +279,7 @@ include 'params.php';
                 <td>{{ x.duration }}</td>
                 <td>{{ x.dur_min }}</td>
                 <td>{{ x.cpu }}</td>
+                <td>{{ x.isgame }}</td>
             </tr>
         </table>
         <p>
