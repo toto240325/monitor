@@ -83,6 +83,8 @@ include 'params.php';
                 $scope.count++;
             }
 
+            $scope.i = 0;
+            $scope.remainingTimeToPlay = "";
             $scope.nbMinToAdd = "15";
             $scope.from = (new Date()).toLocaleDateString("fr-BE", {hour12: false});
             $scope.to = "2099-12-31";
@@ -201,13 +203,15 @@ include 'params.php';
             }
             $scope.getLastTemp();
 
-            $scope.getAllowedTime = function() {
+            $scope.getGameTimeExceptionallyAllowedToday = function() {
                 $myURL = "getGameTimeExceptionallyAllowedToday.php";
-                //console.log("myurl 138 : " + $myURL);
+                console.log("myurl 138 : " + $myURL);
                 $http.get($myURL)
                 .then(
                 function(response) {
-                    $scope.allowedTime = response.data.totalMin;
+                    $scope.gameTimeExceptionallyAllowedToday = response.data.gameTimeExceptionallyAllowedToday;
+                    console.log(response.data);
+                    $scope.gameTimeAllowedDaily = response.data.gameTimeAllowedDaily;
                 },
                 function(failure) {
                     $errorMsg = "Error in getGameTimeExceptionallyAllowedToday : " + failure;
@@ -215,9 +219,10 @@ include 'params.php';
                     alert("error msg 138 : " + $errorMsg);
                 });
             }
-            $scope.getAllowedTime();
+            $scope.getGameTimeExceptionallyAllowedToday();
 
-            $scope.getPlayedTime = function() {
+            getPlayedTime = function() {
+                $scope.i = parseInt($scope.i) + 1;
                 $myURL = "getGamesTodayData.php";
                 //console.log("myurl 138 : " + $myURL);
                 $http.get($myURL)
@@ -231,9 +236,12 @@ include 'params.php';
                     alert("error msg 139 : " + $errorMsg);
                 });
             }
-            $scope.getPlayedTime();
-
-
+            getPlayedTime();
+            
+            $scope.remainingTimeToPlay = function() {
+                 return parseInt($scope.gameTimeExceptionallyAllowedToday) + parseInt($scope.gameTimeAllowedDaily) - parseInt($scope.playedTime);
+            }
+            
             $scope.addGamingTime = function($nbMinToAdd) {
                 $scope.myPage = "getGameTimeExceptionallyAllowedToday.php?myFunc=add&nbMin="+$scope.nbMinToAdd;
                 //alert("myPage : "+$scope.myPage);
@@ -242,7 +250,7 @@ include 'params.php';
                 .then(
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
-                    $scope.getAllowedTime();
+                    $scope.getGameTimeExceptionallyAllowedToday();
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -253,9 +261,7 @@ include 'params.php';
                 });
             }
 
-
-
-
+           $interval(getPlayedTime, 10*1000);
         });
 
     </script>
@@ -273,19 +279,23 @@ include 'params.php';
                 <td>{{ x.cpu }}</td>
             </tr>
         </table>
-
-       <form novalidate>
+        <p>
+        <p>
+        <form novalidate>
             Add minutes:
             <input type="text" ng-model="nbMinToAdd"><br>
             <button ng-click="addGamingTime()">Add minutes</button>
         </form>
-        <p>(<a href="{{myPage35}}" target="_blank">{{myPage35}}</a>)</p>
+        <p>
+        <p>allowed daily : {{gameTimeAllowedDaily}}
+        <p>exceptionally allowed today : {{gameTimeExceptionallyAllowedToday}}
+        <p>played time : {{playedTime }} ( {{ i }} )
+        <p>remaining to play : {{ remainingTimeToPlay() }}
 
-        <p>allowed time today : {{allowedTime}}
-        <p>allowed played time : {{playedTime}}
-        <p>error msg : {{errMsg}}
-        <p>nbMinToAdd : {{nbMinToAdd}}
+<!--
+//<p>error msg : {{errMsg}}
         <br>
+-->
 <!--
 -->
     </body>

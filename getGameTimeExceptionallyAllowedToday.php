@@ -201,7 +201,7 @@ if ($myFunc == "add") {
 
 
 $errMsg = $myArray['errMsg'];
-$totalMin = $myArray['totalMin'];
+$gameTimeExceptionallyAllowedToday = $myArray['totalMin'];
 //if ($errMsg == "") {
 //    $records = json_encode($myArray['gameTimeArray']);
 //} else {
@@ -210,12 +210,11 @@ $totalMin = $myArray['totalMin'];
 
 $outp = '{"errMsg":"' . $errMsg . '"';
 $outp = $outp . ',"date":"' . $date . '"';
-$outp = $outp . ',"totalMin":"' . $totalMin . '"';
+$outp = $outp . ',"gameTimeExceptionallyAllowedToday":"' . $gameTimeExceptionallyAllowedToday . '"';
+$outp = $outp . ',"gameTimeAllowedDaily":"' . $gameTimeAllowedDaily . '"';
 $outp = $outp . '}';
 echo $outp;
 
-
-//echo '{"timeExceptionallyAllowedToday":'.getGameTimeExceptionallyAllowedToday().'}';
 
 ?>
 

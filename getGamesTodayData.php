@@ -50,6 +50,10 @@ function getGamesTodayData()
     global $inTitleList;
     global $today;
     
+
+//    $inTitleList = urlencode(' "Document1 - Microsoft Word" ');
+
+
     // prepare Agario graph -----------------------------------------------------------------------------
     //$fromDateAgar = new DateTime(date('Y-m-d'));
     //$fromDateAgar->modify('-10 day');
@@ -60,12 +64,11 @@ function getGamesTodayData()
     //$toDateAgar = $today;
     //$toDateAgar->modify('+1 day');
     //$toAgar = $toDateAgar->format('Y-m-d');
-    $toAgar = $today." 23:59:59";
+    $toAgar = date('Y-m-d', strtotime($today. '+1 days'));
 
-    //echo "from:".$fromAgar."\n";
-    //echo "to:".$toAgar."\n";
-    
-
+    //echo "from:".$fromAgar."+++<br>\n";
+    //echo "to:".$toAgar."+++<br>\n";
+ 
     //$toAgar = ((new Datetime(date('Y-m-d')))->modify('+1 day'))->format('Y-m-d');
     //$to = $to." 23:59:59";
     //echo "from - to : <br>";
@@ -76,6 +79,7 @@ function getGamesTodayData()
 
     //$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
 
+
     $myPageAgarioAndOtherGames = "http://" . $thisServer . "/monitor/getWindowResult.php" .
         "?from='" . $fromAgar . "'" .
         "&to='" . $toAgar . "'" .
@@ -85,70 +89,31 @@ function getGamesTodayData()
         "&order=date" .
         "&myFunc=dailySummaryTotal";
 
-    echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>";
+    //echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>\n\n\n";
+    //echo "-----------------------------------------<br>\n\n";
+
+
+
     //echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
     //echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
     
-    
-    //echo "<script>";
-    //echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
-    //echo "</script>";
-
-
-echo "test 2\n";
-
-$url="http://192.168.0.147/monitor/getWindowResult.php?from=2018-09-24&to=2018-09-24+23:59:59&inTitleList=%0A++++%22Agar+Private+Server+Agario+Game+Play+Agario+-+Google+Chrome%22%2C%0A++++%22ZombsRoyale.io+%7C+Play+ZombsRoyale.io+for+free+on+Iogames.space%21+-+Google+Chrome%22%2C%0A++++%22Surviv.io+%7C+Play+Surviv.io+for+free+on+Iogames.space%21+-+Google+Chrome%09%22%2C%0A++++%22Agar.io+-+Google+Chrome%22%2C%0A++++%22alis.io+-+Google+Chrome%22%2C%0A++++%22slither.io+-+Google+Chrome%22%2C%0A++++%22diep.io+-+Google+Chrome%22%2C%0A++++%22space1.io+-+Google+Chrome%22%0A&dbhost=localhost&nbrecs=100&order=date&myFunc=dailySummaryTotal";
-echo "url:".$url."\n";
-
-
-    $service_url = $url;
-    echo "test 2.5\n";
-    $curl = curl_init($service_url);
-    echo "test 3\n";
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    $curl_response = curl_exec($curl);
-
-    echo "test 3\n";
-
-    if ($curl_response === false) {
-        $info = curl_getinfo($curl);
-        curl_close($curl);
-        die('error occured during curl exec. Additioanl info: ' . var_export($info));
-    }
-    curl_close($curl);
-    $decoded = json_decode($curl_response);
-    if (isset($decoded->response->status) && $decoded->response->status == 'ERROR') {
-        die('error occured: ' . $decoded->response->errormessage);
-    }
-    echo 'response ok!';
-    var_export($decoded->response);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /*
+    echo "<script>";
+    echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
+    echo "</script>";
+    */
 
     //('mypage Agario2 : '".$myPageAgarioAndOtherGames);
     $json = file_get_contents($myPageAgarioAndOtherGames);
-    echo "json 123 : "."<br>";
-    print_r($json)."\nb<br>";
+    //$json = file_get_contents($a);
+    //echo "json 123 : "."<br>";
+    //print_r($json)."\nb<br>";
     //echo "test 34<br>\n"; var_dump($json);
     return $json;     
 }
 
 
-$jsonGamesTodayData = getGamesTodayData();
-echo "jsonGamesTodayData :".$jsonGamesTodayData."\n";
+echo getGamesTodayData();
 
 ?>
 

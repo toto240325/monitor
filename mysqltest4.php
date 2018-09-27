@@ -29,7 +29,7 @@ $thisServer = $_SERVER['SERVER_NAME'];
 */
 
 include 'params.php';
-include 'getGamesTodayData.php';
+//include 'getGamesTodayData.php';
 
 $defaultTimeZone = 'UTC';
 if (date_default_timezone_get() != $defaultTimeZone) {
@@ -413,72 +413,18 @@ function getGamesGraphData()
 }
 
 
-
-function getGamesTodayData_obsolete()
-{
-    global $dbhost;
-    global $thisServer;
-    global $inTitleList;
-    
-    // prepare Agario graph -----------------------------------------------------------------------------
-    $fromDateAgar = new DateTime(date('Y-m-d'));
-    //$fromDateAgar->modify('-10 day');
-    $fromAgar = $fromDateAgar->format('Y-m-d');
-
-    $toDateAgar = new DateTime(date('Y-m-d'));
-    $toDateAgar->modify('+1 day');
-    $toAgar = $toDateAgar->format('Y-m-d');
-
-    //$toAgar = ((new Datetime(date('Y-m-d')))->modify('+1 day'))->format('Y-m-d');
-    //$to = $to." 23:59:59";
-    //echo "from - to : <br>";
-    //echo $from." - ".$to."<br>";
-
-    //$to = urlencode($to);
-    //echo $inTitleList;
-
-    //$myPageAgarioAndOtherGames = "http://" . $webserver . "/monitor/getWindowResult.php" .
-
-    $myPageAgarioAndOtherGames = "http://" . $thisServer . "/monitor/getWindowResult.php" .
-        "?from='" . $fromAgar . "'" .
-        "&to='" . $toAgar . "'" .
-        "&inTitleList=" . $inTitleList .
-        "&dbhost=" . $dbhost .
-        "&nbrecs=100" .
-        "&order=date" .
-        "&myFunc=dailySummaryTotal";
-
-    //echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>";
-    //echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
-    //echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
-    
-    
-    echo "<script>";
-    echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
-    echo "</script>";
-
-
-    //('mypage Agario2 : '".$myPageAgarioAndOtherGames);
-    $json = file_get_contents($myPageAgarioAndOtherGames);
-    //echo "json 123 : "."<br>";
-    //print_r($json)."\nb<br>";
-    //echo "test 34<br>\n"; var_dump($json);
-    return $json;     
-}
-
 $jsonTable3 = getLokiGraphData();
 
 $jsonTableAgarioAndOtherGames = getGamesGraphData();
 //echo "jsonTableAgarioAndOtherGames  : \n<br>";
 //echo $jsonTableAgarioAndOtherGames."\n<br>";
 
-$jsonGamesTodayData = getGamesTodayData();
+//$jsonGamesTodayData = getGamesTodayData();
 //echo "jsonGamesTodayData : \n<br>";
 //echo $jsonGamesTodayData."\n<br>";
-
-$obj = json_decode($jsonGamesTodayData);
+//$obj = json_decode($jsonGamesTodayData);
 //echo "count : ".count($obj->records)."<br>";
-$durationGames = $obj->records[0]->duration;
+//$durationGames = $obj->records[0]->duration;
 
 ?>
 
@@ -951,10 +897,11 @@ $durationGames = $obj->records[0]->duration;
         <div id="chart_agario">
         this is a placeholder
         </div>
+
+<!--
         <p>test : <?=$jsonGamesTodayData?>
         <p>duration games today : <?=$durationGames?>
         <br>
-<!--
 -->
     </body>
 </html>
