@@ -3,6 +3,18 @@
 
 /*
 getGameTimeExceptionallyAllowedToday : return the total number of minutes that can be played today
+
+
+function get :
+
+http://localhost/monitor/getGameTimeExceptionallyAllowedToday.php
+{"errMsg":"no records found","date":"2018-09-29","gameTimeExceptionallyAllowedToday":"0","gameTimeAllowedDaily":"30"}
+
+function add :
+
+http://localhost/monitor/getGameTimeExceptionallyAllowedToday.php?add=15
+
+
  */
 
 //echo 'Version PHP courante : ' . phpversion() . "<br>";
@@ -13,6 +25,7 @@ $thisServer = $_SERVER['SERVER_NAME'];
     params.php contains among others :
     $webserver = "localhost";
     $dbhost = "localhost";
+    $gameTimeAllowedDaily = 30;
     $inTitleList = urlencode('
         "Agar Private Server Agario Game Play Agario - Google Chrome",
         "ZombsRoyale.io | Play ZombsRoyale.io for free on Iogames.space! - Google Chrome",
@@ -30,8 +43,6 @@ $defaultTimeZone = 'UTC';
 if (date_default_timezone_get() != $defaultTimeZone) {
     date_default_timezone_set($defaultTimeZone);
 }
-
-
 
 /*
 This function returns in json an array containing the number of minutes exceptionally allocated to gaming
@@ -61,12 +72,16 @@ header("Content-Type: application/json; charset=UTF-8");
 
 //sleep(5);
 
+function now() {
+    return _date("Y-m-d H:i:s", false, 'Europe/Paris');
+}
+
 //========================================================================================
 function getGameTimeExceptionallyAllowedToday($gameTimeFunction, $date, $nbMin, $dbhost)
 // date must be in format "YYYY-MM-DD"
 {
 
-    //echo "function : $gameTimeFunction\n";
+    //echo now()." function : $gameTimeFunction\n";
     $totalMin = 0;
     $errMsg = "";
 
@@ -84,69 +99,56 @@ function getGameTimeExceptionallyAllowedToday($gameTimeFunction, $date, $nbMin, 
         INSERT INTO gameTime(nbMin, date) VALUES (".$nbMin.",'".$date."')
         ";
         break;
-     case "others" : 
-        break;
     }
 
     //echo $query."<br>\n";
 
     include 'connect-db.php';
-    $conn = new mysqli($dbhost, $dbuser, $dbpass, $mydb);
+    //echo now()." before connect\n";
+    
+    // p: prefix to the host to indicate persistant connection
+    $conn = new mysqli("p:".$dbhost, $dbuser, $dbpass, $mydb);
     if ($conn->connect_error) {
         $errMsg = 'Server error in connection. Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
         //echo $errMsg;
         return array('errMsg' => $errMsg, 'totalMin' => $totalMin);
     }
 
-    $result = $conn->query($query);
-    if (!$result) {
-        $errMsg = 'Server error in query. Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
-        //echo $errMsg;
-        return array('errMsg' => $errMsg, 'totalMin' => $totalMin);
-    }
-
-    if (!$conn->set_charset("utf8")) {
-        $errMsg = 'Server error in setting charset : '. $conn->error . 'Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
-        //echo $errMsg;
-        return array('errMsg' => $errMsg, 'totalMin' => $totalMin);
-    }
-
-    if ($result->num_rows > 0) {
-        //echo "start --------------------------\n";
-        // output data of each row
-        while ($row = $result->fetch_assoc()) {
-            switch ($gameTimeFunction) {
-            case "get":
-                $totalMin = $row["totalMin"];
-                if ($totalMin == null) {
-                        $totalMin = 0;
-                        $errMsg = "no records found";
-                    }
-                break;
-            case "others":
-                break;
-            }
-        }
-    } else {
-        $errMsg = "0 records !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!".mysql_error();
-    }
-
     switch ($gameTimeFunction) {
-    case "get" : 
-        break;
-    case "add" : 
-        if ($result) {
-            $errMsg = "Insert OK";
-        }
-        else {
-            $errMsg = "Insert failed";
-        }
-        break;
-    case "others" : 
-        break;
+        case "get" : 
+            $result = $conn->query($query);
+            if (!$result) {
+                $errMsg = 'Server error in query. Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
+                echo $errMsg;
+                return array('errMsg' => $errMsg, 'totalMin' => $totalMin);
+            }
+            //echo now()." before result->num_rows > 0\n";
+            if ($result->num_rows > 0) {
+                //echo now()." start --------------------------\n";
+                // output data of each row
+                while ($row = $result->fetch_assoc()) {
+                    $totalMin = $row["totalMin"];
+                    if ($totalMin == null) {
+                            $totalMin = 0;
+                            $errMsg = "no records found";
+                        }
+                }
+            }
+            break;
+        case "add" : 
+            $result = $conn->query($query);
+            if ($result) {
+                $errMsg = "Insert OK";
+            } else {
+                $errMsg = 'insert failed. dbhost :' . $dbhost . '  mydb:' . $mydb;
+            }
+            break;
     }
 
-    $conn->close();
+    // don't close connection since we want to keep a persistent connection
+    //$conn->close();
+    //echo now()." after conn->close\n";
+
     return array('errMsg' => $errMsg,  'totalMin' => $totalMin);
 }
 
@@ -188,17 +190,14 @@ if (isset($_GET['dbhost'])) {$dbhost = $_GET['dbhost'];}
 //echo "this is a test 2";
 
 if ($myFunc == "get") {
-    //$myArray = getDetails($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs);
     $myArray = getGameTimeExceptionallyAllowedToday($myFunc, $date, 0, $dbhost);
 }
 
 if ($myFunc == "add") {
-    //$myArray = getDetails($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs);
     $myArray = getGameTimeExceptionallyAllowedToday($myFunc, $date, $nbMin, $dbhost);
 }
 
 //echo "myArray : ".$myArray;
-
 
 $errMsg = $myArray['errMsg'];
 $gameTimeExceptionallyAllowedToday = $myArray['totalMin'];
@@ -208,12 +207,30 @@ $gameTimeExceptionallyAllowedToday = $myArray['totalMin'];
 //    $records = "[]";
 //}
 
-$outp = '{"errMsg":"' . $errMsg . '"';
-$outp = $outp . ',"date":"' . $date . '"';
-$outp = $outp . ',"gameTimeExceptionallyAllowedToday":"' . $gameTimeExceptionallyAllowedToday . '"';
-$outp = $outp . ',"gameTimeAllowedDaily":"' . $gameTimeAllowedDaily . '"';
-$outp = $outp . '}';
-echo $outp;
+
+
+switch ($myFunc) {
+    case "get" : 
+        $outp = '{"errMsg":"' . $errMsg . '"';
+        $outp = $outp . ',"date":"' . $date . '"';
+        $outp = $outp . ',"gameTimeExceptionallyAllowedToday":"' . $gameTimeExceptionallyAllowedToday . '"';
+        $outp = $outp . ',"gameTimeAllowedDaily":"' . $gameTimeAllowedDaily . '"';
+        $outp = $outp . '}';
+        echo $outp;
+    break;
+    case "add" : 
+        $outp = '{"errMsg":"' . $errMsg . '"';
+        $outp = $outp . '}';
+        echo $outp;
+    break;
+}
+
+
+
+
+
+
+
 
 
 ?>

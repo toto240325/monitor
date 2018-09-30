@@ -31,7 +31,8 @@ $thisServer = $_SERVER['SERVER_NAME'];
 include 'params.php';
 //include 'getGamesTodayData.php';
 
-echo "webserver: ".$webserver."\n";
+echo "webserver: ".$webserver."<br>\n";
+echo "dbhost : ".$dbhost."<br>\n";
 
 $defaultTimeZone = 'UTC';
 if (date_default_timezone_get() != $defaultTimeZone) {
@@ -370,7 +371,7 @@ function getGamesGraphData()
 
     //echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>";
     //echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
-    //echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
+    echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
     
     
     echo "<script>";
@@ -378,8 +379,12 @@ function getGamesGraphData()
     echo "</script>";
 
 
-    //('mypage Agario2 : '".$myPageAgarioAndOtherGames);
+    echo "<script>";
+    echo 'console.log("dbhost ' . $dbhost . '")';
+    echo "</script>";
+
     $json = file_get_contents($myPageAgarioAndOtherGames);
+
     //echo "json 34 : "."<br>";
     //print_r($json);
     //echo "test 34<br>\n"; var_dump($json);
@@ -387,7 +392,7 @@ function getGamesGraphData()
 
     if ($obj->errMsg != "") {
 
-        echo "!!!!!!!!!!!!!!! Error getting data from mypc3 !!!!!!!! ";
+        echo "!!!!!!!!!!!!!!! Error getting data in ".$myPageAgarioAndOtherGames."!!! ";
 
     } else {
         //echo "count : ".count($obj->records)."<br>";

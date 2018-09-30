@@ -60,13 +60,14 @@ class Fgw
     public $duration;
 
     // Assigning the values
-    public function __construct($id, $time, $host, $title, $duration)
+    public function __construct($id, $time, $host, $title, $duration, $isgame)
     {
         $this->id = $id;
         $this->time = $time;
         $this->host = $host;
         $this->title = $title;
         $this->duration = $duration;
+        $this->isgame = $isgame;
     }
 
     // Creating a method (function tied to an object)
@@ -140,177 +141,6 @@ function getDetailsObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbr
     return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
 }
 */
-//========================================================================================
-function getSummaryObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs)
-{
-    $fgwArray = array();
-    $errMsg = "";
-    $query = "
-    SELECT fgw_host,fgw_title,SUM(fgw_duration) AS duration
-    FROM fgw
-    WHERE
-    fgw_host like '%" . $hostFilter . "%' and
-    fgw_title like '%" . $titleFilter . "%' and
-    fgw_time >=" . $from . " and
-    fgw_time <=" . $to . "
-    GROUP BY fgw_host,fgw_title
-    ORDER by duration desc
-    LIMIT " . $nbrecs . "
-    ";
-    //echo $query."<br>\n";
-
-    include 'connect-db.php';
-    $conn = new mysqli($dbhost, $dbuser, $dbpass, $mydb);
-    if ($conn->connect_error) {
-        //echo 'Server error. Please try again sometime. CON';
-        $errMsg = 'Server error. Please try again sometime.';
-        $outp = "{}";
-        return array('outp' => $outp, 'errMsg' => $errMsg);
-    }
-    $result = $conn->query($query);
-
-    if (!$result) {
-        die("problem : " . $conn->error);
-    }
-    /*
-    if (!$conn->set_charset("utf8")) {
-    printf("Error with charset utf8 : %s\n", $conn->error);
-    exit();
-    }
-     */
-    if ($result->num_rows > 0) {
-        // output data of each row
-
-        $fgwArray = array();
-        while ($row = $result->fetch_assoc()) {
-
-            $host = $row["fgw_host"];
-            $title = $row["fgw_title"];
-            if ($title == null) {$title = "";}
-            $duration = $row["duration"];
-            $myfgw = new Fgw("", "", $host, utf8_encode($title), number_format(strval($duration / 60), 0));
-            $fgwArray[] = $myfgw;
-        }
-    } else {
-        $errMsg = "error !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"; // .mysql_error()
-    }
-    $conn->close();
-    return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
-}
-
-//========================================================================================
-function getDailySummaryObsolete($from, $to, $hostFilter, $titleFilter, $dbhost, $nbrecs, $order)
-{
-
-    $fgwArray = array();
-    $errMsg = "";
-
-    $query = "
-    SELECT date(fgw_time) as date, fgw_host, fgw_title, SUM(fgw_duration) AS duration, SUM(fgw_duration)/60 AS duration_min
-    FROM fgw
-    WHERE
-    fgw_host like '%". $hostFilter ."%' and
-    fgw_title is not null and
-    fgw_title <> '' and
-    fgw_time >=" . $from . " and
-    fgw_title like '%" . $titleFilter . "%' and
-    fgw_time <=" . $to . "
-    GROUP BY fgw_host,fgw_title,date
-    ORDER by " . $order . "
-    LIMIT " . $nbrecs . "
-    ";
-
-    //echo $query."<br>\n";
-
-    include 'connect-db.php';
-
-    $conn = new mysqli($dbhost, $dbuser, $dbpass, $mydb);
-    if ($conn->connect_error) {
-        //echo 'Server error. Please try again sometime. CON';
-        $errMsg = 'Server error. Please try again sometime. dbhost :' . $dbhost . "  mydb:" . $mydb;
-        $outp = "{}";
-        return array('outp' => $outp, 'errMsg' => $errMsg);
-    }
-    $result = $conn->query($query);
-
-    if (!$result) {
-        die("problem : " . $conn->error);
-    }
-
-    if (!$conn->set_charset("utf8")) {
-        printf("Error with charset utf8 : %s\n", $conn->error);
-        exit();
-    }
-
-    if ($result->num_rows > 0) {
-        // output data of each row
-        //echo "start --------------------------\n";
-
-        while ($row = $result->fetch_assoc()) {
-
-            $host = $row["fgw_host"];
-            $title = $row["fgw_title"];
-            if ($title == null) {$title = "";}
-            //echo "^$title\n";
-            $date = $row["date"];
-            $duration = $row["duration"];
-            $myfgw = new Fgw("", $date, $host, utf8_encode($title), number_format(strval($duration / 60), 0));
-            $fgwArray[] = $myfgw;
-        }
-    } else {
-        $errMsg = "0 records !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"; // .mysql_error()
-    }
-    $conn->close();
-    return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
-}
-
-//========================================================================================
-function getDailySummaryTotalObsolete($from, $to, $hostFilter, $inTitleList, $dbhost, $nbrecs, $order)
-{
-
-    $errMsg = "";
-    $fgwArray = array();
-    $query = "
-    SELECT date(fgw_time) as date, fgw_host, fgw_title, SUM(fgw_duration) AS duration, SUM(fgw_duration)/60 AS duration_min
-    FROM fgw
-    WHERE
-    " . //fgw_host in ('" . $hostFilter . "') and
-        //fgw_title is not null and
-    "fgw_title <> '' and
-    fgw_host like ('%" . $hostFilter . "%') and
-    fgw_title in (" . $inTitleList . ") and
-    fgw_time >=" . $from . " and
-    fgw_time <=" . $to . "
-    GROUP BY date
-    ORDER by " . $order . "
-    LIMIT " . $nbrecs . "
-    ";
-
-    //echo $query."<br>\n";
-    include 'connect-db.php';
-    $conn = new mysqli($dbhost, $dbuser, $dbpass, $mydb);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    $result = $conn->query($query);
-
-    if (!$result) {
-        die("problem : " . $conn->error);
-    }
-
-    if ($result->num_rows > 0) {
-        // output data of each row
-        while ($row = $result->fetch_assoc()) {
-            $myfgw = new Fgw("", $row["date"], "", "", number_format(strval($row["duration"]/ 60), 0));
-            $fgwArray[] = $myfgw;
-        }
-    } else {
-        $errMsg = "!!!!!!! 0 results";
-    }
-    $conn->close();
-
-     return array('errMsg' => $errMsg, 'fgwArray' => $fgwArray);
-}
 
 //========================================================================================
 function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nbrecs, $order)
@@ -350,7 +180,7 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
         break;
     case "dailySummary" : 
         $query = "
-        SELECT date(fgw_time) as date, fgw_host, fgw_title, SUM(fgw_duration) AS duration, SUM(fgw_duration)/60 AS duration_min
+        SELECT date(fgw_time) as date, fgw_host, fgw_title, SUM(fgw_duration) AS duration, SUM(fgw_duration)/60 AS duration_min, sum(fgw_isgame) as count_isgame
         FROM fgw
         WHERE
         fgw_host like '%". $hostFilter ."%' and
@@ -421,7 +251,7 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
                 $duration = $row["fgw_duration"];
                 $cpu = $row["fgw_cpu"];
                 $isgame = $row["fgw_isgame"];
-                $myfgw = new Fgw("", $time, $host, utf8_encode($title), number_format(strval($duration), 0));
+                $myfgw = new Fgw("", $time, $host, utf8_encode($title), number_format(strval($duration), $isgame));
                 $fgwArray[] = $myfgw;
                 break;
             case "summary":
@@ -441,7 +271,13 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
                 //echo "$title\n";
                 $date = $row["date"];
                 $duration = $row["duration"];
-                $myfgw = new Fgw("", $date, $host, utf8_encode($title), number_format(strval($duration / 60), 0));
+                $count_isgame = $row["count_isgame"];
+                if ($count_isgame > 0) {
+                    $isgame = 1; }
+                else {
+                    $isgame = 0;
+                }
+                $myfgw = new Fgw("", $date, $host, utf8_encode($title), number_format(strval($duration / 60)), $isgame);
                 $fgwArray[] = $myfgw;    
                 break;
             case "dailySummaryTotal":
@@ -518,7 +354,7 @@ function complementFgwArray($fgwArray)
             $thisDate = date('Y-m-d',strtotime($myfgw->time));
             $j=0;
             while (($thisDate <> date('Y-m-d', strtotime($prevDate.' +1 day'))) and ($j<1000) ) {
-                $complementedFgwArray[] = new Fgw("", date('Y-m-d', strtotime($prevDate.' +1 day')), "", "", 0);
+                $complementedFgwArray[] = new Fgw("", date('Y-m-d', strtotime($prevDate.' +1 day')), "", "", 0, 0);
                 $prevDate=date('Y-m-d', strtotime($prevDate.' +1 day'));
                 $j+=1;
             }

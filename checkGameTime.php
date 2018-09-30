@@ -1,13 +1,14 @@
 <?php
 
 /*
-test
+    This script check the status of games played on mypc3 today
  */
 
 //echo 'Version PHP courante : ' . phpversion() . "<br>";
 $thisServer = $_SERVER['SERVER_NAME'];
 //echo "server : $thisServer<br>";
 
+include 'params.php';
 /* 
     params.php contains among others :
     $webserver = "localhost";
@@ -23,9 +24,6 @@ $thisServer = $_SERVER['SERVER_NAME'];
         "space1.io - Google Chrome"
     ');
 */
-
-include 'params.php';
-
 
 ?>
 
@@ -94,16 +92,6 @@ include 'params.php';
             $scope.myFunc = "dailySummary";
             $scope.dbhost = dbhost;
             $scope.nbrecs = "15";
-            $scope.testdata = "test";
-            $scope.testdata2 = new Array("toto", "tutu");
-            $scope.testdata2["toto"] = "datatoto";
-
-            $scope.testfct = function($myArray,$index, $val) {
-                $myArray[$index] = $val;
-            }
-            $scope.testfct($scope.testdata2,"toto","toto2");
-            $scope.testfct($scope.testdata2,"tutu","tutu2");
-
 
             $scope.httpError = "";
             $scope.convStrToDate = function($from) {
@@ -222,9 +210,9 @@ include 'params.php';
             }
             $scope.getGameTimeExceptionallyAllowedToday();
 
-            getPlayedTime = function() {
+            getTimePlayedToday = function() {
                 $scope.i = parseInt($scope.i) + 1;
-                $myURL = "getGamesTodayData.php";
+                $myURL = "getTimePlayedToday.php";
                 //console.log("myurl 199 : " + $myURL);
                 $http.get($myURL)
                 .then(
@@ -233,18 +221,18 @@ include 'params.php';
                     $scope.playedTime = response.data.records[0].duration;
                 },
                 function(failure) {
-                    $errorMsg = "Error in getGamesTodayData : " + failure;
+                    $errorMsg = "Error in getTimePlayedToday : " + failure;
                     console.log($errorMsg);
                     alert("error msg 139 : " + $errorMsg);
                 });
             }
-            getPlayedTime();
+            getTimePlayedToday();
             
             $scope.remainingTimeToPlay = function() {
                  return parseInt($scope.gameTimeExceptionallyAllowedToday) + parseInt($scope.gameTimeAllowedDaily) - parseInt($scope.playedTime);
             }
             
-            $scope.addGamingTime = function($nbMinToAdd) {
+            $scope.addGamingTime = function() {
                 $scope.myPage = "getGameTimeExceptionallyAllowedToday.php?myFunc=add&nbMin="+$scope.nbMinToAdd;
                 //alert("myPage : "+$scope.myPage);
                 console.log("myURL99: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
@@ -263,7 +251,7 @@ include 'params.php';
                 });
             }
 
-           $interval(getPlayedTime, 10*1000);
+           $interval(getTimePlayedToday, 10*1000);
         });
 
     </script>
