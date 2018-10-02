@@ -281,7 +281,7 @@ function getFgw($fgwFunction, $from, $to, $hostFilter, $titleParam, $dbhost, $nb
                 $fgwArray[] = $myfgw;    
                 break;
             case "dailySummaryTotal":
-                $myfgw = new Fgw("", $row["date"], "", "", number_format(strval($row["duration"]/ 60), 0));
+                $myfgw = new Fgw("", $row["date"], "", "", number_format(strval($row["duration"]/ 60)), 0);
                 $fgwArray[] = $myfgw;
                 break;
             case "others":

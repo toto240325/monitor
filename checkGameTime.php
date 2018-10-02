@@ -1,5 +1,4 @@
 <?php
-
 /*
     This script check the status of games played on mypc3 today
  */
@@ -74,13 +73,13 @@ include 'params.php';
                 return parseInt($scope.backupDiffInMin) > 25 * 60 ? {'background-color': 'pink'} : {'background-color': 'lightgreen'}
             }
 
-                   $scope.myURL = $location.absUrl();
-
+            $scope.myURL = $location.absUrl();
+/*
             $scope.count = 0;
             $scope.myFunction = function() {
                 $scope.count++;
             }
-
+*/
             $scope.playedTime = 0;
             $scope.i = 0;
             $scope.remainingTimeToPlay = "";
@@ -130,67 +129,32 @@ include 'params.php';
                 });
             }
             $scope.getResults();
-
-            $scope.getLastTemp = function() {
-                //$scope.myPage36 = "http://"+webserver+"/monitor/getEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
-                //$scope.myPage36 = "getEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
-                $scope.myPage36 = "getEvent.php?eventFct=getLastEventByType&dbhost=" + $scope.dbhost+"&type=temperature";              
-                console.log("myURL36: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage36);
-                $http.get($scope.myPage36)
-                .then(
-                function(response) {
-                    $scope.lastTemp = response.data.records[0].time;
-                    $scope.lastDetectionTime = response.data.records[0].time;
-                    $scope.lastDetectionTemp = response.data.records[0].text;
-                },
-                function(failure) {
-                    $errorMsg = "Error in getEvent 36 : " + failure;
-                    console.log($errorMsg);
-                    alert("error msg 36 : " + $errorMsg);
-                });
-            }
-
             
-            $scope.getLastEvent = function($myArray,$type) {
-                //$myURL = "http://"+webserver+"/monitor/getEvent.php?type="+$type;
-                $myURL = "getEvent.php?type="+$type+"&eventFct=getLastEventByType";
-                //alert($myURL);
-                console.log("myURL37: http://<?php echo $thisServer ?>/monitor/" +$myURL);
-                $http.get($myURL)
+            console.log("test 4444");
+
+
+
+            $scope.getKeywords = function() {
+                $scope.myPage135 = "getKeywords.php";
+                //alert("myPage35 : "+$scope.myPage35);
+                console.log("myURL135: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage135);
+                $http.get($scope.myPage135)
                 .then(
                 function(response) {
-                    //$lastEventTime = response.data.time;
-                    //$lastDetectionTxt = response.data.text;
-                    //alert(response.data.text);
-                    $myArray[$type] = response.data.records[0].time;
+                    $scope.keywords = response.data.keywords;
+                    $scope.errorMsg = response.data.errMsg;
+                    //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
-                    $errorMsg = "Error in getLastEvent3 (for type " + $type + ") : " + failure;
-                    console.log($errorMsg);
-                    alert("error msg 37 : " + $errorMsg);
+                    //Second function handles error
+                    $errorMsg = "Error in getKeywords : " + failure;
+                    console.log("error 135 : "+$errorMsg);
+                    alert("error message 135 : " + $errorMsg);
                 });
-
             }
-            $scope.getLastEventGetWindowTitleMypc3 = function($myArray,$type) {
-                //$myURL = "http://"+webserver+"/monitor/getLastTimeWindowTitle.php";
-                $myURL = "getLastTimeWindowTitle.php";
-                //alert("myurl 38 : " + $myURL);
-                console.log("myurl 38 : " + $myURL);
-                $http.get($myURL)
-                .then(
-                function(response) {
-                    $lastEventTime = response.data.time;
-                    $lastDetectionTitle = response.data.title;
-                    $myArray[$type] = $lastEventTime;
-                },
-                function(failure) {
-                    $errorMsg = "Error in getLastEventGetWindowTitleMypc3 : " + failure;
-                    console.log($errorMsg);
-                    alert("error msg 38 : " + $errorMsg);
-                });
+            $scope.getKeywords();
+            
 
-            }
-            $scope.getLastTemp();
 
             $scope.getGameTimeExceptionallyAllowedToday = function() {
                 $myURL = "getGameTimeExceptionallyAllowedToday.php";
@@ -210,14 +174,16 @@ include 'params.php';
             }
             $scope.getGameTimeExceptionallyAllowedToday();
 
+            console.log("test 5555");
+
             getTimePlayedToday = function() {
                 $scope.i = parseInt($scope.i) + 1;
                 $myURL = "getTimePlayedToday.php";
-                //console.log("myurl 199 : " + $myURL);
+                console.log("myurl 199 : " + $myURL);
                 $http.get($myURL)
                 .then(
                 function(response) {
-                    //console.log(response.data.records[0]);
+                    console.log(response.data.records[0]);
                     $scope.playedTime = response.data.records[0].duration;
                 },
                 function(failure) {
@@ -227,11 +193,15 @@ include 'params.php';
                 });
             }
             getTimePlayedToday();
+
+            console.log("test 6666");
             
             $scope.remainingTimeToPlay = function() {
                  return parseInt($scope.gameTimeExceptionallyAllowedToday) + parseInt($scope.gameTimeAllowedDaily) - parseInt($scope.playedTime);
             }
             
+            console.log("test 777");
+
             $scope.addGamingTime = function() {
                 $scope.myPage = "getGameTimeExceptionallyAllowedToday.php?myFunc=add&nbMin="+$scope.nbMinToAdd;
                 //alert("myPage : "+$scope.myPage);
@@ -251,14 +221,34 @@ include 'params.php';
                 });
             }
 
-           $interval(getTimePlayedToday, 10*1000);
+            $scope.addKeyword = function() {
+                $scope.myPage = "getKeywords.php?myFunc=add&keyword="+$scope.newKeyword;
+                console.log("myURL199: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
+                $http.get($scope.myPage)
+                .then(
+                function(response) {
+                    $scope.errorMsg = response.data.errMsg;
+                    $scope.getKeywords();
+                    //alert("error message 34 : " + response.data.errMsg)
+                },
+                function(failure) {
+                    //Second function handles error
+                    $errorMsg = "Error in 199 : " + failure;
+                    console.log("error 199 : "+$errorMsg);
+                    alert("error message 199 : " + $errorMsg);
+                });
+            }
+
+            console.log("test 888");
+
+            $interval(getTimePlayedToday, 10*1000);
         });
 
     </script>
  
     <body ng-app="myApp" ng-controller="myCtrl">
            
-        <table>
+    <table>
             <tr ng-repeat="x in fgw">
                 <td>{{ x.date }}</td>
                 <td>{{ x.time }}</td>
@@ -272,10 +262,23 @@ include 'params.php';
         </table>
         <p>
         <p>
+        <table>
+            <tr ng-repeat="x in keywords">
+                <td>{{ x }}</td>
+            </tr>
+        </table>
+        <p>
+        <p>
         <form novalidate>
             Add minutes:
             <input type="text" ng-model="nbMinToAdd"><br>
             <button ng-click="addGamingTime()">Add minutes</button>
+        </form>
+        <p>
+        <form novalidate>
+            Add keyword:
+            <input type="text" ng-model="newKeyword"><br>
+            <button ng-click="addKeyword(newKeyword)">Add keyword</button>
         </form>
         <p>
         <p>allowed daily : {{gameTimeAllowedDaily}}
