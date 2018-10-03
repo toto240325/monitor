@@ -31,8 +31,8 @@ $thisServer = $_SERVER['SERVER_NAME'];
 include 'params.php';
 //include 'getGamesTodayData.php';
 
-echo "webserver: ".$webserver."<br>\n";
-echo "dbhost : ".$dbhost."<br>\n";
+//echo "webserver: ".$webserver."<br>\n";
+//echo "dbhost : ".$dbhost."<br>\n";
 
 $defaultTimeZone = 'UTC';
 if (date_default_timezone_get() != $defaultTimeZone) {
@@ -371,7 +371,7 @@ function getGamesGraphData()
 
     //echo "<br><br>=========================================<br>".$myPageAgarioAndOtherGames."<br>";
     //echo "fromAgar : ".$fromAgar."  toAgar : ".$toAgar."<br>";
-    echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
+    //echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
     
     
     echo "<script>";
@@ -434,6 +434,14 @@ $jsonTableAgarioAndOtherGames = getGamesGraphData();
 //$obj = json_decode($jsonGamesTodayData);
 //echo "count : ".count($obj->records)."<br>";
 //$durationGames = $obj->records[0]->duration;
+
+
+$to = date('Y-m-d');
+$fromDate = new DateTime($to);
+$fromDate->modify('-4 day');
+$from = $fromDate->format('Y-m-d');
+
+
 
 ?>
 
@@ -667,23 +675,26 @@ $jsonTableAgarioAndOtherGames = getGamesGraphData();
         google.load('visualization', '1', {'packages':['corechart','timeline']});
 
         // Set a callback to run when the Google Visualization API is loaded.
-        var from = "<?php echo $from?>";
-        var to = "<?php echo $to?>";
+        //var from = "<    ?php echo $from?>";
+        //var to = "<     ?php echo $to?>";
+
+        Date.prototype.addHours = function(hours) {
+            var dat = new Date(this.valueOf())
+            dat.setHours(dat.getHours() + hours);
+            return dat;
+        }
+
+        Date.prototype.addDays = function(days) {
+            var dat = new Date(this.valueOf())
+            dat.setDate(dat.getDate() + days);
+            return dat;
+        }
+
+        var to = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+        var from = new Date().addDays(-4);
 
         google.setOnLoadCallback(function() { drawChartAgario(from,to); });
         function drawChartAgario(from,to) {
-
-            Date.prototype.addHours = function(hours) {
-                var dat = new Date(this.valueOf())
-                dat.setHours(dat.getHours() + hours);
-                return dat;
-            }
-
-            Date.prototype.addDays = function(days) {
-                var dat = new Date(this.valueOf())
-                dat.setDate(dat.getDate() + days);
-                return dat;
-            }
 
             function getDates(startDate, stopDate) {
                 var dateArray = new Array();
@@ -727,31 +738,37 @@ $jsonTableAgarioAndOtherGames = getGamesGraphData();
         }
     </script>
 
-  <!-- graph for Loki eating's habits  -->
+  <!-- graph for Loki eating's habits -->
     <script type="text/javascript">
 
         // Load the Visualization API and the piechart package.
         google.load('visualization', '1', {'packages':['corechart','timeline']});
 
         // Set a callback to run when the Google Visualization API is loaded.
-        var mypageAgario = "<?=$myPageAgarioAndOtherGames?>";
-        var from = "<?=$from?>";
-        var to = "<?=$to?>";
+        // var mypageAgario = "<    ?=$myPageAgarioAndOtherGames?>";
+        /*
+        var from = "<   ?=$from?>";
+        var to = "<   ?=$to?>";
+        */
+
+        Date.prototype.addHours = function(hours) {
+            var dat = new Date(this.valueOf())
+            dat.setHours(dat.getHours() + hours);
+            return dat;
+        }
+
+        Date.prototype.addDays = function(days) {
+            var dat = new Date(this.valueOf())
+            dat.setDate(dat.getDate() + days);
+            return dat;
+        }
+
+        var to = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+        var from = new Date().addDays(-4);
+
 
         google.setOnLoadCallback(function() { drawChart3(from,to); });
         function drawChart3(from,to) {
-
-            Date.prototype.addHours = function(hours) {
-                var dat = new Date(this.valueOf())
-                dat.setHours(dat.getHours() + hours);
-                return dat;
-            }
-
-            Date.prototype.addDays = function(days) {
-                var dat = new Date(this.valueOf())
-                dat.setDate(dat.getDate() + days);
-                return dat;
-            }
 
             function getDates(startDate, stopDate) {
                 var dateArray = new Array();
@@ -785,8 +802,6 @@ $jsonTableAgarioAndOtherGames = getGamesGraphData();
                 is3D: 'true',
                 width: 1000,
                 height: 400,
-
-
                 hAxis: {
                     ticks: dateArray,
                     //gridlines: {count: 15},

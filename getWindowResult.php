@@ -358,7 +358,7 @@ function complementFgwArray($fgwArray)
                 $prevDate=date('Y-m-d', strtotime($prevDate.' +1 day'));
                 $j+=1;
             }
-            $complementedFgwArray[] = new Fgw("", $myfgw->time, "", "", $myfgw->duration);
+            $complementedFgwArray[] = new Fgw("", $myfgw->time, "", "", $myfgw->duration, 0);
             $prevDate=date('Y-m-d', strtotime($prevDate.' +1 day'));
             $i+=1;
         }

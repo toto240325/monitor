@@ -183,8 +183,9 @@ include 'params.php';
                 $http.get($myURL)
                 .then(
                 function(response) {
-                    console.log(response.data.records[0]);
-                    $scope.playedTime = response.data.records[0].duration;
+                    console.log(response.data.timePlayedToday);
+                    //$scope.playedTime = response.data.records[0].duration;
+                    $scope.playedTime = response.data.timePlayedToday;
                 },
                 function(failure) {
                     $errorMsg = "Error in getTimePlayedToday : " + failure;

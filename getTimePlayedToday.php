@@ -47,10 +47,65 @@ function _date($format = "r", $timestamp = false, $timezone = false)
     return date($format, ($timestamp != false ? (int) $timestamp : $myDateTime->format('U')) + $offset);
 }
 
-
 $today = _date("Y-m-d", false, 'Europe/Paris');
 
-function getGamesTimeToday()
+
+//========================================================================================
+function getGamesTimeToday($dbhost)
+{
+    //echo now()." function : $myFunc\n";
+
+    $today = _date("Y-m-d", false, 'Europe/Paris');
+    $timePlayedToday = -1;
+    $from = $today;
+    $to = date('Y-m-d', strtotime($today. '+1 days'));
+    $errMsg = "";
+
+    $query = "
+    SELECT SUM(fgw_duration)/60 AS duration_min 
+    FROM fgw 
+    WHERE fgw_time>= '" . $from . "' 
+    and fgw_time <'" . $to . "' 
+    and fgw_isgame = 1 
+    ";  
+
+    //echo $query."<br>\n";
+
+    include 'connect-db.php';
+    
+    // p: prefix to the host to indicate persistant connection
+    $conn = new mysqli("p:".$dbhost, $dbuser, $dbpass, $mydb);
+    if ($conn->connect_error) {
+        $errMsg = 'Server error in connection. Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
+        //echo $errMsg;
+        return array('errMsg' => $errMsg, 'timePlayedToday' => -1);
+    }
+
+    $result = $conn->query($query);
+    if (!$result) {
+        $errMsg = 'Server error in query. Please try again sometime. dbhost :' . $dbhost . '  mydb:' . $mydb;
+        echo $errMsg;
+        return array('errMsg' => $errMsg, 'timePlayedToday' => -1);
+    }
+    
+    //echo now()." before result->num_rows > 0\n";
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $timePlayedToday = floatval($row["duration_min"]);
+//            echo "timePlayedToday : ".$timePlayedToday;
+            $timePlayedToday = floor($timePlayedToday);
+//            echo "timePlayedToday : ".$timePlayedToday;
+        }
+        $errMsg = "";
+    }
+
+    // don't close connection since we want to keep a persistent connection
+    //$conn->close();
+    //echo now()." after conn->close\n";
+    return json_encode(array('errMsg' => $errMsg,  'timePlayedToday' => $timePlayedToday));
+}
+
+function getGamesTimeToday_obs()
 {
     global $dbhost;
     global $thisServer;
@@ -119,8 +174,12 @@ function getGamesTimeToday()
     return $json;     
 }
 
+$dbhost = "localhost";
+if (isset($_GET['dbhost'])) {$dbhost = $_GET['dbhost'];}
 
-echo getGamesTimeToday();
+echo getGamesTimeToday($dbhost);
+
+//echo getGamesTimeToday_obs();
 
 ?>
 
