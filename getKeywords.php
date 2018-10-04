@@ -76,9 +76,15 @@ function getKeywords($myFunc, $keyword, $dbhost)
         FROM keywords
         ";  
         break;
-    case "add" : 
+        case "add" : 
         $query = "
         INSERT INTO keywords(keyword) VALUES ('".$keyword."')
+        ";
+        break;
+    case "del" : 
+        $query = "
+        DELETE FROM keywords 
+        WHERE keyword='".$keyword."'
         ";
         break;
     }
@@ -118,7 +124,17 @@ function getKeywords($myFunc, $keyword, $dbhost)
             if ($result) {
                 $errMsg = "Insert OK";
             } else {
-                $errMsg = 'insert failed. dbhost :' . $dbhost . '  mydb:' . $mydb;
+                $errMsg = 'insert failed. keyword : ' . $keyword . '; dbhost :' . $dbhost . ';  mydb:' . $mydb;
+            }
+            break;
+        case "del" : 
+            $result = $conn->query($query);
+            if ($result) {
+                $errMsg = "Delete OK";
+                //var_dump($result);
+            } else {
+                //var_dump($result);
+                $errMsg = 'delete failed. keyword : ' . $keyword . '; dbhost :' . $dbhost . ';  mydb:' . $mydb;
             }
             break;
     }
@@ -173,6 +189,9 @@ switch ($myFunc) {
         $myArray = getKeywords($myFunc, "", $dbhost);
     break;
     case "add" : 
+        $myArray = getKeywords($myFunc, $keyword, $dbhost);
+    break;
+    case "del" : 
         $myArray = getKeywords($myFunc, $keyword, $dbhost);
     break;
     case "mock" : 

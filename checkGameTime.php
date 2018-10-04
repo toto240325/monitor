@@ -1,4 +1,4 @@
-<?php
+    <?php
 /*
     This script check the status of games played on mypc3 today
  */
@@ -174,12 +174,12 @@ include 'params.php';
             }
             $scope.getGameTimeExceptionallyAllowedToday();
 
-            console.log("test 5555");
+            //console.log("test 5555");
 
             getTimePlayedToday = function() {
                 $scope.i = parseInt($scope.i) + 1;
                 $myURL = "getTimePlayedToday.php";
-                console.log("myurl 199 : " + $myURL);
+                //console.log("myurl 199 : " + $myURL);
                 $http.get($myURL)
                 .then(
                 function(response) {
@@ -195,13 +195,13 @@ include 'params.php';
             }
             getTimePlayedToday();
 
-            console.log("test 6666");
+            //console.log("test 6666");
             
             $scope.remainingTimeToPlay = function() {
                  return parseInt($scope.gameTimeExceptionallyAllowedToday) + parseInt($scope.gameTimeAllowedDaily) - parseInt($scope.playedTime);
             }
             
-            console.log("test 777");
+            //console.log("test 777");
 
             $scope.addGamingTime = function() {
                 $scope.myPage = "getGameTimeExceptionallyAllowedToday.php?myFunc=add&nbMin="+$scope.nbMinToAdd;
@@ -222,8 +222,8 @@ include 'params.php';
                 });
             }
 
-            $scope.addKeyword = function() {
-                $scope.myPage = "getKeywords.php?myFunc=add&keyword="+$scope.newKeyword;
+            $scope.addKeyword = function($keyword) {
+                $scope.myPage = "getKeywords.php?myFunc=add&keyword="+$keyword;
                 console.log("myURL199: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
                 $http.get($scope.myPage)
                 .then(
@@ -237,6 +237,24 @@ include 'params.php';
                     $errorMsg = "Error in 199 : " + failure;
                     console.log("error 199 : "+$errorMsg);
                     alert("error message 199 : " + $errorMsg);
+                });
+            }
+
+            $scope.delKeyword = function($keyword) {
+                $scope.myPage = "getKeywords.php?myFunc=del&keyword="+$keyword;
+                console.log("myURL189: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
+                $http.get($scope.myPage)
+                .then(
+                function(response) {
+                    $scope.errorMsg = response.data.errMsg;
+                    $scope.getKeywords();
+                    //alert("error message 34 : " + response.data.errMsg)
+                },
+                function(failure) {
+                    //Second function handles error
+                    $errorMsg = "Error in 189 : " + failure;
+                    console.log("error 189 : "+$errorMsg);
+                    alert("error message 189 : " + $errorMsg);
                 });
             }
 
@@ -265,8 +283,9 @@ include 'params.php';
         <p>
         <table>
             <tr ng-repeat="x in keywords">
-                <td>{{ x }}</td>
-            </tr>
+                <td>{{x}}</td>
+                <td><a href="" ng-click="delKeyword(x)">Link</a></td>
+</tr>
         </table>
         <p>
         <p>
