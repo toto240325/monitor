@@ -44,14 +44,14 @@ include 'params.php';
         }
     </style>
 
-<!--
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
--->
+<!--
     <script src="http://localhost/monitor/libs/angular.min.js"></script>
     <script type="text/javascript" src="http://localhost/monitor/libs/jsapi"></script>
     <script type="text/javascript" src="http://localhost/monitor/libs/jquery.min.js"></script>
+-->
 
     <script>
         var webserver = "<?php echo $webserver; ?>";
