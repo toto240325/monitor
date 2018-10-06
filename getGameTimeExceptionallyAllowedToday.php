@@ -183,7 +183,7 @@ if (isset($_GET['myFunc'])) {$myFunc = $_GET['myFunc'];}
 $nbMin = 0;
 if (isset($_GET['nbMin'])) {$nbMin = $_GET['nbMin'];}
 
-$dbhost = "192.168.0.147";
+$dbhost = "localhost";
 if (isset($_GET['dbhost'])) {$dbhost = $_GET['dbhost'];}
 
 //checkCharSet($conn);
@@ -207,8 +207,6 @@ $gameTimeExceptionallyAllowedToday = $myArray['totalMin'];
 //    $records = "[]";
 //}
 
-
-
 switch ($myFunc) {
     case "get" : 
         $outp = '{"errMsg":"' . $errMsg . '"';
@@ -224,15 +222,6 @@ switch ($myFunc) {
         echo $outp;
     break;
 }
-
-
-
-
-
-
-
-
-
 ?>
 
 

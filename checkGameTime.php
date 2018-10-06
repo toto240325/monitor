@@ -44,14 +44,14 @@ include 'params.php';
         }
     </style>
 
+<!--
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<!--
+-->
     <script src="http://localhost/monitor/libs/angular.min.js"></script>
     <script type="text/javascript" src="http://localhost/monitor/libs/jsapi"></script>
     <script type="text/javascript" src="http://localhost/monitor/libs/jquery.min.js"></script>
--->
 
     <script>
         var webserver = "<?php echo $webserver; ?>";
@@ -289,10 +289,11 @@ include 'params.php';
         <p>
         <p>
         <table>
-            <tr ng-repeat="x in keywords">
+            <!-- "track by $index" in case of duplicate values -->
+            <tr ng-repeat="x in keywords track by $index">
                 <td>{{x}}</td>
                 <td><a href="" ng-click="delKeyword(x)">Link</a></td>
-</tr>
+            </tr>
         </table>
         <p>
         <p>
