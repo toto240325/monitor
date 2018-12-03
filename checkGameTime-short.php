@@ -42,7 +42,12 @@ include 'params.php';
         table tr:nth-child(even) {
         background-color: #ffffff;
         }
-    </style>
+
+        p, form, input, button {
+        font-family: verdana;
+        font-size: 30px;
+        }
+        </style>
 
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
