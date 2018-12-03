@@ -71,7 +71,6 @@ include 'params.php';
             };
             displayCurrentDate();
 
-            $interval(displayCurrentDate, 10*1000);
 
             $scope.myStyleLastBackup = function(){
                 $scope.backupDiffInMin = ($scope.staticNow - (new Date($scope.eventsArray["backup P702"]))) / (60*1000);
@@ -138,8 +137,6 @@ include 'params.php';
             
             console.log("test 4444");
 
-
-
             $scope.getKeywords = function() {
                 $scope.myPage135 = "getKeywords.php";
                 //alert("myPage35 : "+$scope.myPage35);
@@ -160,8 +157,6 @@ include 'params.php';
             }
             $scope.getKeywords();
             
-
-
             $scope.getGameTimeExceptionallyAllowedToday = function() {
                 $myURL = "getGameTimeExceptionallyAllowedToday.php";
                 //console.log("myurl 1381 : " + $myURL);
@@ -265,8 +260,7 @@ include 'params.php';
                 });
             }
 
-            console.log("test 888");
-
+            $interval(displayCurrentDate, 10*1000);
             $interval(getTimePlayedToday, 10*1000);
         });
 
@@ -292,7 +286,8 @@ include 'params.php';
             <!-- "track by $index" in case of duplicate values -->
             <tr ng-repeat="x in keywords track by $index">
                 <td>{{x}}</td>
-                <td><a href="" ng-click="delKeyword(x)">Link</a></td>
+                <td>{{$index}}</td>
+                <td><a href="" ng-click="delKeyword(x)">Del</a></td>
             </tr>
         </table>
         <p>
