@@ -45,7 +45,7 @@ include 'params.php';
 
         p, form, input, button {
         font-family: verdana;
-        font-size: 30px;
+        font-size: 25px;
         }
         </style>
 
@@ -276,13 +276,13 @@ include 'params.php';
         <p>
         <form novalidate>
             Add minutes:
-            <input type="text" size="2" ng-model="nbMinToAdd"><br>
+            <input type="text" size="3" ng-model="nbMinToAdd"><br>
             <button ng-click="addGamingTime()">Add minutes</button>
         </form>
         <p>
         <form novalidate>
             Add keyword:
-            <input type="text" ng-model="newKeyword"><br>
+            <input type="text" size="5" ng-model="newKeyword"><br>
             <button ng-click="addKeyword(newKeyword)">Add keyword</button>
         </form>
         <p>
