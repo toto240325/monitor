@@ -1,12 +1,8 @@
 <script>
-console.log ("test99");
+//console.log ("test99");
 </script>
 
 <?php
-
-/*
-test
- */
 
 //echo 'Version PHP courante : ' . phpversion() . "<br>";
 $thisServer = $_SERVER['SERVER_NAME'];
@@ -306,10 +302,6 @@ function getLokiGraphData()
     $toDate->modify('+1 day');
     $to = $toDate->format('Y-m-d');
 
-    //======================================================================================
-    //======================================================================================
-
-
     // prepare Loki graph ---------------------------------------------------------------------------
 
     $myFunc = "2";
@@ -340,6 +332,7 @@ function getGamesGraphData()
     global $dbhost;
     global $thisServer;
     global $inTitleList;
+    global $myPageAgarioAndOtherGames;
     
     // prepare Agario graph -----------------------------------------------------------------------------
     $fromDateAgar = new DateTime(date('Y-m-d'));
@@ -374,14 +367,13 @@ function getGamesGraphData()
     //echo "mypage Agario2 : ".$myPageAgarioAndOtherGames."<br>";
     
     
-    echo "<script>";
-    echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
-    echo "</script>";
+    //echo "<script>";
+    //echo 'console.log("mypage Agario2 : ' . $myPageAgarioAndOtherGames . '")';
+    //echo "</script>";
 
-
-    echo "<script>";
-    echo 'console.log("dbhost ' . $dbhost . '")';
-    echo "</script>";
+    //echo "<script>";
+    //echo 'console.log("dbhost ' . $dbhost . '")';
+    //echo "</script>";
 
     $json = file_get_contents($myPageAgarioAndOtherGames);
 
@@ -392,7 +384,8 @@ function getGamesGraphData()
 
     if ($obj->errMsg != "") {
 
-        echo "!!!!!!!!!!!!!!! Error getting data in ".$myPageAgarioAndOtherGames."!!! ";
+        // maybe it's normal and the result is just empty
+        //echo "!!!!!!!!!!!!!!! Error getting data in ".$myPageAgarioAndOtherGames."!!! ";
 
     } else {
         //echo "count : ".count($obj->records)."<br>";
@@ -413,7 +406,7 @@ function getGamesGraphData()
 
         $GGdata = $graphData;
 
-        //echo "GCdata2 : \n<br>".json_encode($GGdata)."\n<br>";
+        //echo "GGdata2 : \n<br>".json_encode($GGdata)."\n<br>";
         //echo "formatGraphData  : \n<br>";
         //echo json_encode(formatGraphData($GGdata))."\n<br>";
     }
@@ -441,8 +434,6 @@ $fromDate = new DateTime($to);
 $fromDate->modify('-4 day');
 $from = $fromDate->format('Y-m-d');
 
-
-
 ?>
 
 <!--<!DOCTYPE html>
@@ -461,15 +452,16 @@ $from = $fromDate->format('Y-m-d');
         background-color: #ffffff;
         }
     </style>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>   
     <script>
         var webserver = "<?php echo $webserver; ?>";
         var dbhost = "<?php echo $dbhost; ?>";
 
         var app = angular.module('myApp', []);
         app.controller('myCtrl', function($scope, $http,$location,$filter,$interval) {
+
 
             $scope.staticNow = new Date();
             $scope.staticNowTimeStr = (new Date()).toLocaleTimeString("fr-BE", {hour12: false});
@@ -538,8 +530,36 @@ $from = $fromDate->format('Y-m-d');
                 $scope.count++;
             }
 
+
+
+//   $to = date('Y-m-d');
+//    $fromDate = new DateTime($to);
+//    $fromDate->modify('-4 day');
+//    $from = $fromDate->format('Y-m-d');
+
+            $scope.myTest = "initial test";
+
+            $scope.example = {
+                value: new Date(2013, 9, 22)
+            };
+            $scope.myFrom2 = (new Date());
+            $scope.myFrom2.setHours(0,0,0,0);
+            $scope.myFrom = (new Date());
+            $scope.myFrom.setHours(0,0,0,0);
+            $scope.myTo = (new Date());
+            $scope.myTo.setHours(0,0,0,0);
+            $scope.myTo.setDate($scope.myTo.getDate()+1);
+            
+
             $scope.from = (new Date()).toLocaleDateString("fr-BE", {hour12: false});
+            $scope.from = (new Date());
+            //$scope.to = (new Date().toLocaleDateString("fr-BE", {hour12: false});
             $scope.to = "2099-12-31";
+            $scope.to = new Date();
+            $scope.to.setDate($scope.to.getDate()+1);
+
+
+
             $scope.hostFilter = "";
             $scope.titleFilter = "";
             $scope.myFunc = "dailySummary";
@@ -564,12 +584,49 @@ $from = $fromDate->format('Y-m-d');
                 $fromDate = new Date($yyyy + "-" + $mm + "-" + $dd);
                 return $filter('date')($fromDate,'yyyy-MM-dd');
             }
+
+
+            Date.prototype.yyyymmdd = function() {
+            var mm = this.getMonth() + 1; // getMonth() is zero-based
+            var dd = this.getDate();
+
+            return [this.getFullYear(),
+                    (mm>9 ? '' : '0') + mm,
+                    (dd>9 ? '' : '0') + dd
+                    ].join('/');
+            };
+
+            var date = new Date();
+            //console.log("my date : " + date.yyyymmdd());
+
+            $scope.prevDate = function() {
+                milsInADay = 24*60*60*1000;
+                $scope.myFrom = new Date($scope.myFrom.getTime()-milsInADay);
+                $scope.myTo = new Date($scope.myTo.getTime()-milsInADay);
+                $scope.getResults();
+            }
+
+
+            $scope.onInput = function() {
+                $scope.getResults();
+                }
+
+
+            $scope.nextDate = function() {
+                milsInADay = 24*60*60*1000;
+                $scope.myFrom = new Date($scope.myFrom.getTime()+milsInADay);
+                $scope.myTo = new Date($scope.myTo.getTime()+milsInADay);
+                $scope.getResults();
+            }
             $scope.getResults = function() {
+                
+                $myFromStr = $scope.myFrom
+                
                 //$scope.myPage35 = "http://"+webserver+"/monitor/getWindowResult.php" +
                 $scope.myPage35 = "getWindowResult.php" +
-                "?from='" + $scope.convStrToDate($scope.from) + "'" +
+                "?from='" + $scope.myFrom.yyyymmdd() + "'" +    // $scope.convStrToDate($scope.from) + "'" +
                 //"?from='" + $titleFilter('date')($scope.fromDate,'yyyy-MM-dd') + "'" +
-                "&to='"+ $scope.to + "'" +
+                "&to='"+ $scope.myTo.yyyymmdd() + "'" +
                 "&hostFilter="+ $scope.hostFilter +
                 "&titleFilter="+ $scope.titleFilter +
                 "&dbhost="+ $scope.dbhost +
@@ -577,7 +634,7 @@ $from = $fromDate->format('Y-m-d');
                 "&order=duration+desc" +
                 "&myFunc="+ $scope.myFunc;
                 //alert("myPage35 : "+$scope.myPage35);
-                console.log("myURL35: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage35);
+                //console.log("myURL35: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage35);
                 $http.get($scope.myPage35)
                 .then(
                 function(response) {
@@ -598,7 +655,7 @@ $from = $fromDate->format('Y-m-d');
                 //$scope.myPage36 = "http://"+webserver+"/monitor/getEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
                 //$scope.myPage36 = "getEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
                 $scope.myPage36 = "getEvent.php?eventFct=getLastEventByType&dbhost=" + $scope.dbhost+"&type=temperature";              
-                console.log("myURL36: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage36);
+                //console.log("myURL36: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage36);
                 $http.get($scope.myPage36)
                 .then(
                 function(response) {
@@ -616,7 +673,7 @@ $from = $fromDate->format('Y-m-d');
                 //$myURL = "http://"+webserver+"/monitor/getEvent.php?type="+$type;
                 $myURL = "getEvent.php?type="+$type+"&eventFct=getLastEventByType";
                 //alert($myURL);
-                console.log("myURL37: http://<?php echo $thisServer ?>/monitor/" +$myURL);
+                //console.log("myURL37: http://<?php echo $thisServer ?>/monitor/" +$myURL);
                 $http.get($myURL)
                 .then(
                 function(response) {
@@ -666,13 +723,12 @@ $from = $fromDate->format('Y-m-d');
 
     </script>
 
-  
-
     <!-- graph for Agar.io -->
     <script type="text/javascript">
 
         // Load the Visualization API and the piechart package.
-        google.load('visualization', '1', {'packages':['corechart','timeline']});
+
+        google.charts.load('current', {'packages': ['corechart','timeline'] });
 
         // Set a callback to run when the Google Visualization API is loaded.
         //var from = "<    ?php echo $from?>";
@@ -693,7 +749,7 @@ $from = $fromDate->format('Y-m-d');
         var to = new Date().toJSON().slice(0,10).replace(/-/g,'/');
         var from = new Date().addDays(-4);
 
-        google.setOnLoadCallback(function() { drawChartAgario(from,to); });
+        google.charts.setOnLoadCallback(function() { drawChartAgario(from,to); });
         function drawChartAgario(from,to) {
 
             function getDates(startDate, stopDate) {
@@ -742,13 +798,13 @@ $from = $fromDate->format('Y-m-d');
     <script type="text/javascript">
 
         // Load the Visualization API and the piechart package.
-        google.load('visualization', '1', {'packages':['corechart','timeline']});
+        google.charts.load('visualization', '1', {'packages':['corechart','timeline']});
 
         // Set a callback to run when the Google Visualization API is loaded.
-        // var mypageAgario = "<    ?=$myPageAgarioAndOtherGames?>";
+        // var mypageAgario = "<  ?=$myPageAgarioAndOtherGames?>";
         /*
-        var from = "<   ?=$from?>";
-        var to = "<   ?=$to?>";
+        var from = "<  ?=$from?>";
+        var to = "<  ?=$to?>";
         */
 
         Date.prototype.addHours = function(hours) {
@@ -767,7 +823,7 @@ $from = $fromDate->format('Y-m-d');
         var from = new Date().addDays(-4);
 
 
-        google.setOnLoadCallback(function() { drawChart3(from,to); });
+        google.charts.setOnLoadCallback(function() { drawChart3(from,to); });
         function drawChart3(from,to) {
 
             function getDates(startDate, stopDate) {
@@ -812,7 +868,7 @@ $from = $fromDate->format('Y-m-d');
             // Instantiate and draw our chart, passing in some options.
             // Do not forget to check your div ID
             var chart = new google.visualization.AreaChart(document.getElementById('chart_div3'));
-            chart.draw(data, options);
+            //chart.draw(data, options);
         }
     </script>
 
@@ -823,49 +879,80 @@ $from = $fromDate->format('Y-m-d');
         <table>
             <td><h1>{{currentDateStr}} {{currentTimeStr}}</h1>
 
+                <!-- 
                 myURL : {{myURL}}<br>
-                <!-- my interval count : {{myCount}}<br> -->
+                my interval count : {{myCount}}<br> 
+                -->
             </td>
             <td>
+                <!--
                 <b>Last Temp recorded : </b>
                 <span  ng-style="myStyleLastTemp(lastTemp)"> {{lastTemp}} </span><br>
                 ({{tempDiffInMin}} hours)
-                <hr> <!--------------------------------------------------->
+                <hr> 
                 <b>Last Detection recorded : </b>
                 <span  ng-style="myStyleLastDetection(lastDetetionTime)"> {{lastDetectionTime}} </span><br>
                 ({{DetectionDiffInMin}} min)
-                <hr> <!--------------------------------------------------->
+                <hr> 
                 <b>event[1]: {{ eventsArray["1"] }} </b><br>
+                -->
                 <b>backup P702    : <span  ng-style="myStyleLastEvent('backup P702',eventsArray['backup P702'])"> {{ eventsArray["backup P702"] }} </span></b><br>
                 <b>last getWindows: <span  ng-style="myStyleLastEvent('getWindowTitle mypc3',eventsArray['getWindowTitle mypc3'])"> {{ eventsArray["getWindowTitle mypc3"] }} </span></b><br>
             </td>
         </table>
         <hr> <!--------------------------------------------------->
+        <!-- 
         Scope.myPage36 : {{myPage36}}<br>
         URL : <span id="demo1"></span><br>
         pathArray : <span id="demo2"></span><br>
         SeconLevelArray : <span id="demo3"></span><br>
+        -->
         <script>
             var newURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
             var pathArray = window.location.pathname.split( '/' );
             var secondLevelLocation = pathArray[0];
+            /*
             document.getElementById("demo1").innerHTML = newURL;
             document.getElementById("demo2").innerHTML = pathArray;
             document.getElementById("demo3").innerHTML = secondLevelLocation;
-
+            */
         </script>
 
         <hr> <!--------------------------------------------------->
 
-        <form novalidate>
-            From:
-            <input type="text" ng-model="from">
-            To:
-            <input type="text" ng-model="to"><br>
+
+        <form name="myForm">
+            myFrom:
+            <input type="date" ng-change="onInput()"  id="exampleInput" name="input" ng-model="myFrom"
+                placeholder="yyyy-MM-dd" min="2018-01-01" max="2099-12-31" required />
+
+            myTo:
+            <input type="date" id="exampleInputTo" name="inputTo" ng-model="myTo"
+                placeholder="yyyy-MM-dd" min="2018-01-01" max="2099-12-31" required />
+
+            <button ng-click="prevDate()">Prev</button>
+            <button ng-click="nextDate()">Next</button>
+
+
+            <div role="alert">
+                <span class="error" ng-show="myForm.input.$error.required">
+                    Required!</span>
+                <span class="error" ng-show="myForm.input.$error.date">
+                    Not a valid date!</span>
+            </div>
+            <!--
+            <tt>value myFrom = {{myFrom | date: "yyyy-MM-dd HH:mm:ss"}}</tt><br/>
+            <tt>value myTo = {{myTo | date: "yyyy-MM-dd HH:mm:ss"}}</tt><br/>
+            <tt>myForm.input.$valid = {{myForm.input.$valid}}</tt><br/>
+            <tt>myForm.input.$error = {{myForm.input.$error}}</tt><br/>
+            <tt>myForm.$valid = {{myForm.$valid}}</tt><br/>
+            <tt>myForm.$error.required = {{!!myForm.$error.required}}</tt><br/>
+            -->
             Function:
             <input type="radio" ng-model="myFunc" value="details">Details
             <input type="radio" ng-model="myFunc" value="summary">Summary
             <input type="radio" ng-model="myFunc" value="dailySummary">Daily Summary
+            <button ng-click="prevDate()">Prev</button>
             <br>
             Database :
             <input type="radio" ng-model="dbhost" value="localhost">Localhost
@@ -883,12 +970,13 @@ $from = $fromDate->format('Y-m-d');
         </form>
         <p>(<a href="{{myPage35}}" target="_blank">{{myPage35}}</a>)</p>
 
+        <!--
         Scope.errMsg : {{errMsg}}<br>
-        
+        -->
         <table>
             <tr ng-repeat="x in fgw">
                 <td>{{ x.date }}</td>
-                <td>{{ x.time }}</td>
+                <td style="width:100px" >{{ x.time }}</td>
                 <td>{{ x.host }}</td>
                 <td>{{ x.title }}</td>
                 <td>{{ x.duration }}</td>
@@ -896,28 +984,31 @@ $from = $fromDate->format('Y-m-d');
                 <td>{{ x.cpu }}</td>
             </tr>
         </table>
-        <hr> <!--------------------------------------------------->
+<!--
+        <hr> 
         <b>Last Temp recorded : </b>
         (<a href="{{showLogURL}}" target="_blank">show log</a>)<br>
         (<a href="{{myPage36}}" target="_blank">{{myPage36}}</a>)<br>
         <span  ng-style="myStyleLastTemp(lastTemp)"> {{lastTemp}} </span><br>
         tempDiffInMin : {{tempDiffInMin}}
-        <hr> <!--------------------------------------------------->
+        <hr> 
         <b>Last Detection recorded : </b>
         (<a href="{{lokiEatingURL}}" target="_blank">Loki Eating</a>)<br>
         <span  ng-style="myStyleLastDetection(lastDetetionTime)"> {{lastDetectionTime}} </span><br>
         txt : {{lastDetectionTxt}}<br>
         temp : {{lastDetectionTemp}}<br>
-        DetectionDiffInMin : {{DetectionDiffInMin}}
-
-        <hr> <!--------------------------------------------------->
-        <p>Chart div</p>
+        DetectionDiffInMin : {{DetectionDiffInMin}}        
+        <hr>
+-->
         <div id="chart_div3">
+<!--
         placeholder for chart_div3
+-->
         </div>
-        <br>
-        <hr> <!--------------------------------------------------->
+<!--
+        <hr> 
         <p>My Agario & Co chart (<a href="<?=$myPageAgarioAndOtherGames?>" target="_blank"><?=$myPageAgarioAndOtherGames?></a>)</p>
+-->
         <div id="chart_agario">
         this is a placeholder
         </div>
