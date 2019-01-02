@@ -50,7 +50,7 @@ if ($shortVersion) {
     echo '
         p, form, input, button {
             font-family: verdana;
-            font-size: 30px;
+            font-size: 40px;
         }
     ';
 };
