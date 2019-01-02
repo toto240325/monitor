@@ -24,6 +24,7 @@ include 'params.php';
     ');
 */
 
+$shortVersion = (isset($_GET['short']));
 ?>
 
 <!--<!DOCTYPE html>
@@ -54,6 +55,7 @@ include 'params.php';
 -->
 
     <script>
+        console.log("start script")
         var webserver = "<?php echo $webserver; ?>";
         var dbhost = "<?php echo $dbhost; ?>";
 
@@ -118,7 +120,7 @@ include 'params.php';
                 "&order=duration+desc" +
                 "&myFunc="+ $scope.myFunc;
                 //alert("myPage35 : "+$scope.myPage35);
-                console.log("myURL35: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage35);
+                //console.log("myURL35: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage35);
                 $http.get($scope.myPage35)
                 .then(
                 function(response) {
@@ -135,12 +137,10 @@ include 'params.php';
             }
             $scope.getResults();
             
-            console.log("test 4444");
-
             $scope.getKeywords = function() {
                 $scope.myPage135 = "getKeywords.php";
                 //alert("myPage35 : "+$scope.myPage35);
-                console.log("myURL135: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage135);
+                //console.log("myURL135: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage135);
                 $http.get($scope.myPage135)
                 .then(
                 function(response) {
@@ -157,6 +157,26 @@ include 'params.php';
             }
             $scope.getKeywords();
             
+            $scope.getKeywordsWL = function() {
+                $scope.myPage1351 = "getKeywordsWL.php";
+                //alert("myPage351 : "+$scope.myPage35);
+                //console.log("myURL1351: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage1351);
+                $http.get($scope.myPage1351)
+                .then(
+                function(response) {
+                    $scope.keywordsWL = response.data.keywords;
+                    $scope.errorMsg = response.data.errMsg;
+                    //alert("error message 34 : " + response.data.errMsg)
+                },
+                function(failure) {
+                    //Second function handles error
+                    $errorMsg = "Error in getKeywords : " + failure;
+                    console.log("error 1351 : "+$errorMsg);
+                    alert("error message 1351 : " + $errorMsg);
+                });
+            }
+            $scope.getKeywordsWL();
+            
             $scope.getGameTimeExceptionallyAllowedToday = function() {
                 $myURL = "getGameTimeExceptionallyAllowedToday.php";
                 //console.log("myurl 1381 : " + $myURL);
@@ -164,7 +184,7 @@ include 'params.php';
                 .then(
                 function(response) {
                     $scope.gameTimeExceptionallyAllowedToday = response.data.gameTimeExceptionallyAllowedToday;
-                    console.log(response.data);
+                    //console.log(response.data);
                     $scope.gameTimeAllowedDaily = response.data.gameTimeAllowedDaily;
                 },
                 function(failure) {
@@ -184,7 +204,7 @@ include 'params.php';
                 $http.get($myURL)
                 .then(
                 function(response) {
-                    console.log(response.data.timePlayedToday);
+                    //console.log(response.data.timePlayedToday);
                     //$scope.playedTime = response.data.records[0].duration;
                     $scope.playedTime = response.data.timePlayedToday;
                 },
@@ -242,6 +262,25 @@ include 'params.php';
                 });
             }
 
+            $scope.addKeywordWL = function($keywordWL) {
+                $scope.myPage = "getKeywordsWL.php?myFunc=add&keyword="+$keywordWL;
+                console.log("myURL1991: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
+                $http.get($scope.myPage)
+                .then(
+                function(response) {
+                    $scope.errorMsg = response.data.errMsg;
+                    $scope.getKeywordsWL();
+                    $scope.newKeywordWL = "";
+                    //alert("error message 34 : " + response.data.errMsg)
+                },
+                function(failure) {
+                    //Second function handles error
+                    $errorMsg = "Error in 199 : " + failure;
+                    console.log("error 199 : "+$errorMsg);
+                    alert("error message 199 : " + $errorMsg);
+                });
+            }
+
             $scope.delKeyword = function($keyword) {
                 $scope.myPage = "getKeywords.php?myFunc=del&keyword="+$keyword;
                 console.log("myURL189: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
@@ -260,6 +299,24 @@ include 'params.php';
                 });
             }
 
+            $scope.delKeywordWL = function($keywordWL) {
+                $scope.myPage = "getKeywordsWL.php?myFunc=del&keyword="+$keywordWL;
+                console.log("myURL1891: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
+                $http.get($scope.myPage)
+                .then(
+                function(response) {
+                    $scope.errorMsg = response.data.errMsg;
+                    $scope.getKeywordsWL();
+                    //alert("error message 341 : " + response.data.errMsg)
+                },
+                function(failure) {
+                    //Second function handles error
+                    $errorMsg = "Error in 189 : " + failure;
+                    console.log("error 189 : "+$errorMsg);
+                    alert("error message 189 : " + $errorMsg);
+                });
+            }
+
             $interval(displayCurrentDate, 10*1000);
             $interval(getTimePlayedToday, 10*1000);
         });
@@ -268,7 +325,12 @@ include 'params.php';
  
     <body ng-app="myApp" ng-controller="myCtrl">
            
-    <table>
+    
+<?php 
+if (!$shortVersion) {
+    echo '
+        <!-- windows titles -->
+        <table>
             <tr ng-repeat="x in fgw">
                 <td>{{ x.date }}</td>
                 <td>{{ x.time }}</td>
@@ -282,26 +344,65 @@ include 'params.php';
         </table>
         <p>
         <p>
+        ';
+    };
+    ?>
+
         <table>
-            <!-- "track by $index" in case of duplicate values -->
-            <tr ng-repeat="x in keywords track by $index">
-                <td>{{x}}</td>
-                <td>{{$index}}</td>
-                <td><a href="" ng-click="delKeyword(x)">Del</a></td>
-            </tr>
+            <td valign=top>
+
+                <!-- blacklist keywords -->
+                <form novalidate>
+                    Add blacklist keyword:<br>
+                    <input type="text" ng-model="newKeyword"><br>
+                    <button ng-click="addKeyword(newKeyword)">Add BL keyword</button>
+                </form>
+                <p>
+
+<?php 
+if (!$shortVersion) {
+    echo '
+                <table>
+                <!-- "track by $index" in case of duplicate values -->
+                <tr ng-repeat="x in keywords track by $index">
+                    <td>{{x}}</td>
+                    <td>{{$index}}</td>
+                    <td><a href="" ng-click="delKeyword(x)">Del</a></td>
+                </tr>
+                </table>
+    ';
+};
+?>
+
+            </td>
+            <td valign=top>
+                <!-- whitelist keywords -->
+                <form novalidate>
+                    Add whitelist keyword:<br>
+                    <input type="text" ng-model="newKeywordWL"><br>
+                    <button ng-click="addKeywordWL(newKeywordWL)">Add WL keyword</button>
+                </form>
+                <p>
+<?php 
+if (!$shortVersion) {
+    echo '
+                <table>
+                    <!-- "track by $index" in case of duplicate values -->
+                    <tr ng-repeat="x in keywordsWL track by $index">
+                        <td>{{x}}</td>
+                        <td>{{$index}}</td>
+                        <td><a href="" ng-click="delKeywordWL(x)">Del</a></td>
+                    </tr>
+                </table>
+    ';
+};
+?>
+            </td>
         </table>
-        <p>
-        <p>
         <form novalidate>
             Add minutes:
             <input type="text" ng-model="nbMinToAdd"><br>
             <button ng-click="addGamingTime()">Add minutes</button>
-        </form>
-        <p>
-        <form novalidate>
-            Add keyword:
-            <input type="text" ng-model="newKeyword"><br>
-            <button ng-click="addKeyword(newKeyword)">Add keyword</button>
         </form>
         <p>
         <p>allowed daily : {{gameTimeAllowedDaily}}
@@ -317,4 +418,3 @@ include 'params.php';
 -->
     </body>
 </html>
-

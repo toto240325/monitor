@@ -2,22 +2,23 @@
 <?php
 
 /*
-getKeywords : return the list of keywords to check in windows titles
+getKeywordsWL : return the list of whitelist keywords to check in windows titles
 
 function get :
-http://localhost/monitor/getKeywords.php
+http://localhost/monitor/getKeywordsWL.php
 {["keyword1", "keyword expression 2"]}
 
 function add :
-http://localhost/monitor/getKeywords.php?myFunc=add&keyword=toto
+http://localhost/monitor/getKeywordsWL.php?myFunc=add&keyword=toto
 
 function del :
-http://localhost/monitor/getKeywords.php?myFunc=del&keyword=toto
+http://localhost/monitor/getKeywordsWL.php?myFunc=del&keyword=toto
+
 
 NB : json validate : https://jsonlint.com/
 
 History :
-01/10/2018 ED : first version
+01/01/2019 ED : first version
 
  */
 
@@ -62,7 +63,7 @@ function now() {
 }
 
 //========================================================================================
-function getKeywords($myFunc, $keyword, $dbhost)
+function getKeywordsWL($myFunc, $keyword, $dbhost)
 // date must be in format "YYYY-MM-DD"
 {
 
@@ -74,17 +75,17 @@ function getKeywords($myFunc, $keyword, $dbhost)
         case "get" : 
         $query = "
         SELECT keyword
-        FROM keywords
+        FROM keywordsWL
         ";  
         break;
     case "add" : 
         $query = "
-        INSERT INTO keywords(keyword) VALUES ('".$keyword."')
+        INSERT INTO keywordsWL (keyword) VALUES ('".$keyword."')
         ";
         break;
     case "del" : 
         $query = "
-        DELETE FROM keywords 
+        DELETE FROM keywordsWL 
         WHERE keyword='".$keyword."'
         ";
         break;
@@ -187,13 +188,13 @@ if (isset($_GET['dbhost'])) {$dbhost = $_GET['dbhost'];}
 
 switch ($myFunc) {
     case "get" : 
-        $myArray = getKeywords($myFunc, "", $dbhost);
+        $myArray = getKeywordsWL($myFunc, "", $dbhost);
     break;
     case "add" : 
-        $myArray = getKeywords($myFunc, $keyword, $dbhost);
+        $myArray = getKeywordsWL($myFunc, $keyword, $dbhost);
     break;
     case "del" : 
-        $myArray = getKeywords($myFunc, $keyword, $dbhost);
+        $myArray = getKeywordsWL($myFunc, $keyword, $dbhost);
     break;
     case "mock" : 
     $myArray = array('errMsg' => "mock function !",  'keywords' => array("keyword1","keyword2"));

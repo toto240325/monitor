@@ -281,9 +281,15 @@ include 'params.php';
         </form>
         <p>
         <form novalidate>
-            Add keyword:
-            <input type="text" size="10" ng-model="newKeyword"><br>
-            <button ng-click="addKeyword(newKeyword)">Add keyword</button>
+            Add keyword BL:
+            <input type="text" size="10" ng-model="newKeywordBL"><br>
+            <button ng-click="addKeywordBL(newKeywordBL)">Add keyword BL</button>
+        </form>
+        <p>
+        <form novalidate>
+            Add keyword WL:
+            <input type="text" size="10" ng-model="newKeywordWL"><br>
+            <button ng-click="addKeywordWL(newKeywordWL)">Add keyword WL</button>
         </form>
         <p>
         <p>allowed daily : {{gameTimeAllowedDaily}}
