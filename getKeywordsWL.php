@@ -6,6 +6,7 @@ getKeywordsWL : return the list of whitelist keywords to check in windows titles
 
 function get :
 http://localhost/monitor/getKeywordsWL.php
+http://192.168.0.147/monitor/getKeywordsWL.php
 {["keyword1", "keyword expression 2"]}
 
 function add :
@@ -75,17 +76,17 @@ function getKeywordsWL($myFunc, $keyword, $dbhost)
         case "get" : 
         $query = "
         SELECT keyword
-        FROM keywordsWL
+        FROM keywordswl
         ";  
         break;
     case "add" : 
         $query = "
-        INSERT INTO keywordsWL (keyword) VALUES ('".$keyword."')
+        INSERT INTO keywordswl (keyword) VALUES ('".$keyword."')
         ";
         break;
     case "del" : 
         $query = "
-        DELETE FROM keywordsWL 
+        DELETE FROM keywordswl
         WHERE keyword='".$keyword."'
         ";
         break;
