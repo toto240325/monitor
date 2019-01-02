@@ -420,7 +420,7 @@ if (!$shortVersion) {
         <p>allowed daily : {{gameTimeAllowedDaily}}
         <p>exceptionally allowed today : {{gameTimeExceptionallyAllowedToday}}
         <p>played time : {{playedTime }} ( {{ i }} )
-        <p>remaining to play : {{ remainingTimeToPlay() }}
+        <p>Remaining to play : {{ remainingTimeToPlay() }}
 
 <!--
 //<p>error msg : {{errMsg}}
