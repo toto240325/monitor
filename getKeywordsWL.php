@@ -17,7 +17,7 @@ http://localhost/monitor/getKeywordsWL.php?myFunc=del&keyword=toto
 
 
 NB : json validate : https://jsonlint.com/
-
+ 
 History :
 01/01/2019 ED : first version
 
