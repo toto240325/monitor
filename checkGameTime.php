@@ -236,8 +236,11 @@ if ($shortVersion) {
             
             //console.log("test 777");
 
-            $scope.addGamingTime = function() {
-                $scope.myPage = "getGameTimeExceptionallyAllowedToday.php?myFunc=add&nbMin="+$scope.nbMinToAdd;
+            $scope.addGamingTime = function($operation) {
+                console.log("operation : "+ $operation);
+                $nbToAdd = $scope.nbMinToAdd;
+                if ($operation == "Sub") { $nbToAdd = -($nbToAdd); }
+                $scope.myPage = "getGameTimeExceptionallyAllowedToday.php?myFunc=add&nbMin="+$nbToAdd;
                 //alert("myPage : "+$scope.myPage);
                 console.log("myURL99: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
                 $http.get($scope.myPage)
@@ -412,9 +415,10 @@ if (!$shortVersion) {
             </td>
         </table>
         <form novalidate>
-            Add minutes:
+        Add minutes:
             <input type="text" ng-model="nbMinToAdd"><br>
-            <button ng-click="addGamingTime()">Add minutes</button>
+            <button ng-click="addGamingTime('Add')">Add</button>
+            <button ng-click="addGamingTime('Sub')">Sub</button>
         </form>
         <p>
         <p>allowed daily : {{gameTimeAllowedDaily}}
