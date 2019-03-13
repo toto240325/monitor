@@ -209,6 +209,23 @@ if ($shortVersion) {
 
             //console.log("test 5555");
 
+	    $scope.sendMail = function() {
+		$myURL = 'send-mail.php?to="toto240325@gmail.com"&subject="minutes added"&message="strange !? ;-)"';
+		//$myURL = 'send-mail.php?subject="minutes added"&message="strange !? ;-)"';
+		//$myURL = "send-mail.php";
+		$http.get($myURL)
+		.then(
+                function(response) {
+                    console.log("email sent");
+                },
+                function(failure) {
+                    $errorMsg = "Error in sendMail : " + failure;
+                    console.log($errorMsg);
+                    alert("error msg 1139 : " + $errorMsg);
+                });
+	    }
+
+
             getTimePlayedToday = function() {
                 $scope.i = parseInt($scope.i) + 1;
                 $myURL = "getTimePlayedToday.php";
@@ -248,6 +265,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getGameTimeExceptionallyAllowedToday();
+		    $scope.sendMail();
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
