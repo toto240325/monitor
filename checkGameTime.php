@@ -209,8 +209,8 @@ if ($shortVersion) {
 
             //console.log("test 5555");
 
-	    $scope.sendMail = function() {
-		$myURL = 'send-mail.php?to="toto240325@gmail.com"&subject="minutes added"&message="strange !? ;-)"';
+	    $scope.sendMail = function($subject,$msg) {
+		$myURL = 'send-mail.php?to="toto240325@gmail.com"&subject='+$subject+'&message='+$msg;
 		//$myURL = 'send-mail.php?subject="minutes added"&message="strange !? ;-)"';
 		//$myURL = "send-mail.php";
 		$http.get($myURL)
@@ -265,7 +265,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getGameTimeExceptionallyAllowedToday();
-		    $scope.sendMail();
+		    $scope.sendMail("just added some time to play","some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -285,6 +285,7 @@ if ($shortVersion) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
                     $scope.newKeyword = "";
+		    $scope.sendMail("just added a new keyword in the blacklist: "+$keyword,"some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -304,6 +305,7 @@ if ($shortVersion) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywordsWL();
                     $scope.newKeywordWL = "";
+		    $scope.sendMail("just added a new keyword in the whitelist : "+$keywordWL,"some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
