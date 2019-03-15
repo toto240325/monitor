@@ -103,6 +103,7 @@ if ($shortVersion) {
             $scope.i = 0;
             $scope.remainingTimeToPlay = "";
             $scope.nbMinToAdd = "15";
+            $scope.pwd = "";
             $scope.from = (new Date()).toLocaleDateString("fr-BE", {hour12: false});
             $scope.to = "2099-12-31";
             $scope.hostFilter = "";
@@ -216,7 +217,11 @@ if ($shortVersion) {
 		$http.get($myURL)
 		.then(
                 function(response) {
-                    console.log("email sent");
+                    if (response.data.status="simulation !") {
+                        console.log("simulation of email sent : " + response.data.additionalInfo)
+                    } else {
+                        console.log("email actually sent");
+                    }
                 },
                 function(failure) {
                     $errorMsg = "Error in sendMail : " + failure;
@@ -253,7 +258,17 @@ if ($shortVersion) {
             
             //console.log("test 777");
 
+            $scope.isPwdOK = function($txt1,$txt2) {
+                if ($scope.pwd != "toto") {
+                    alert("sorry ! password not correct :-(");
+                    $scope.sendMail($txt1 + " - wrong password : " + $scope.pwd,"some more details : "+$txt2);
+                    return false;
+                }
+                return true;
+            }
+
             $scope.addGamingTime = function($operation) {
+                if (!$scope.isPwdOK("addGamingTime " + $operation,$scope.nbMinToAdd)) return;
                 console.log("operation : "+ $operation);
                 $nbToAdd = $scope.nbMinToAdd;
                 if ($operation == "Sub") { $nbToAdd = -($nbToAdd); }
@@ -265,7 +280,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getGameTimeExceptionallyAllowedToday();
-		    $scope.sendMail("just added some time to play","some more details...");
+		            $scope.sendMail("just added some time to play","some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -277,6 +292,7 @@ if ($shortVersion) {
             }
 
             $scope.addKeyword = function($keyword) {
+                if (!$scope.isPwdOK("addKeyword",$keyword)) return;
                 $scope.myPage = "getKeywords.php?myFunc=add&keyword="+$keyword;
                 console.log("myURL199: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
                 $http.get($scope.myPage)
@@ -285,7 +301,7 @@ if ($shortVersion) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
                     $scope.newKeyword = "";
-		    $scope.sendMail("just added a new keyword in the blacklist: "+$keyword,"some more details...");
+		            $scope.sendMail("just added a new keyword in the blacklist: "+$keyword,"some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -297,6 +313,7 @@ if ($shortVersion) {
             }
 
             $scope.addKeywordWL = function($keywordWL) {
+                if (!$scope.isPwdOK("addKeywordWL",$keywordWL)) return;
                 $scope.myPage = "getKeywordsWL.php?myFunc=add&keyword="+$keywordWL;
                 console.log("myURL1991: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
                 $http.get($scope.myPage)
@@ -305,7 +322,7 @@ if ($shortVersion) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywordsWL();
                     $scope.newKeywordWL = "";
-		    $scope.sendMail("just added a new keyword in the whitelist : "+$keywordWL,"some more details...");
+		            $scope.sendMail("just added a new keyword in the whitelist : "+$keywordWL,"some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -317,6 +334,7 @@ if ($shortVersion) {
             }
 
             $scope.delKeyword = function($keyword) {
+                if (!$scope.isPwdOK("delKeyword",$keyword)) return;
                 $scope.myPage = "getKeywords.php?myFunc=del&keyword="+$keyword;
                 console.log("myURL189: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
                 $http.get($scope.myPage)
@@ -324,7 +342,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
-		    $scope.sendMail("just deleted a keyword in the blacklist : "+$keywordWL,"some more details...");
+		            $scope.sendMail("just deleted a keyword in the blacklist : "+$keywordWL,"some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -336,6 +354,7 @@ if ($shortVersion) {
             }
 
             $scope.delKeywordWL = function($keywordWL) {
+                if (!$scope.isPwdOK("delKeywordWL",$keywordWL)) return;
                 $scope.myPage = "getKeywordsWL.php?myFunc=del&keyword="+$keywordWL;
                 console.log("myURL1891: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
                 $http.get($scope.myPage)
@@ -343,7 +362,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywordsWL();
-		    $scope.sendMail("just deleted a keyword in the whitelist : "+$keywordWL,"some more details...");
+		            $scope.sendMail("just deleted a keyword in the whitelist : "+$keywordWL,"some more details...");
                     //alert("error message 341 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -447,7 +466,9 @@ if (!$shortVersion) {
             <input type="text" ng-model="nbMinToAdd"><br>
             <button ng-click="addGamingTime('Add')">Add</button>
             <button ng-click="addGamingTime('Sub')">Sub</button>
+            <br>pwd : <input type="text" ng-model="pwd"><br>
         </form>
+        <p>
         <p>
         <p>allowed daily : {{gameTimeAllowedDaily}}
         <p>exceptionally allowed today : {{gameTimeExceptionallyAllowedToday}}

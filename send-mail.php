@@ -32,9 +32,13 @@ header("Content-Type: application/json; charset=UTF-8");
 
 
 
+function alert($msg) {
+    echo "<script type='text/javascript'>alert('$msg');</script>";
+}
+
+
 ///========================================================================================
 // main
-
 
 $to = 'toto240325@gmail.com';
 if (isset($_GET['to'])) {$to = $_GET['to'];}
@@ -54,16 +58,23 @@ $output = $output . "  message : ".$message."\n\r";
 $output = $output . "  to      : ".$to."\n\r";
 $output = $output . "  headers : ".$headers."\n\r";
 
+if ($thisServer == "192.168.0.147" ) {
 
-if (mail($to, $subject, $message, $headers)) {
-   $output = $output . "SUCCESS\n\r";
+   if (mail($to, $subject, $message, $headers)) {
+      $output = $output . "SUCCESS\n\r";
+   } else {
+      $output = $output . "ERROR\n\r";
+   }
+   $data = "";
 } else {
-   $output = $output . "ERROR\n\r";
+   $output = $output . "this is just a simulation !\n\r";
+   $status = "simulation !";  
+   $additionalInfo = $subject . " " . $message;  
 }
 
-$data = "";
-$outp = '{"errMsg":' . json_encode($output) ;
-$outp = $outp . ',"additional data":"' . $data . '"' ;
+$outp =         '{"errMsg":' . json_encode($output) ;
+$outp = $outp . ',"status":"' . $status . '"' ;
+$outp = $outp . ',"additionalInfo":"' . $additionalInfo . '"' ;
 $outp = $outp . '}';
 echo $outp;
 
