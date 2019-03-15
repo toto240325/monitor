@@ -324,6 +324,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
+		    $scope.sendMail("just deleted a keyword in the blacklist : "+$keywordWL,"some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -342,6 +343,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywordsWL();
+		    $scope.sendMail("just deleted a keyword in the whitelist : "+$keywordWL,"some more details...");
                     //alert("error message 341 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -354,14 +356,20 @@ if ($shortVersion) {
 
             $interval(displayCurrentDate, 10*1000);
             $interval(getTimePlayedToday, 10*1000);
+    
+            $scope.sendMail("window.onload triggered on checkGame","...");
+            console.log('just sent an email on window.onload'); 
         });
 
+    // window.onload = function () {
+    //   angular.element(document.querySelector('[ng-controller="myCtrl"]')).scope().sendMail("window.onload triggered on checkGame","...");
+    // }
     </script>
  
     <body ng-app="myApp" ng-controller="myCtrl">
-           
-    
+
 <?php 
+
 if (!$shortVersion) {
     echo '
         <!-- windows titles -->
