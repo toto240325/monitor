@@ -264,6 +264,8 @@ if ($shortVersion) {
                     $scope.sendMail($txt1 + " - wrong password : " + $scope.pwd,"some more details : "+$txt2);
                     return false;
                 }
+                // if pwd was OK, blank it !
+                $scope.pwd = "";
                 return true;
             }
 
@@ -466,7 +468,7 @@ if (!$shortVersion) {
             <input type="text" ng-model="nbMinToAdd"><br>
             <button ng-click="addGamingTime('Add')">Add</button>
             <button ng-click="addGamingTime('Sub')">Sub</button>
-            <br>pwd : <input type="text" ng-model="pwd"><br>
+            <br>pwd : <input type="password" ng-model="pwd"><br>
         </form>
         <p>
         <p>
