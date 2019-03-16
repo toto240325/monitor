@@ -74,6 +74,7 @@ if ($shortVersion) {
         var app = angular.module('myApp', []);
         app.controller('myCtrl', function($scope, $http,$location,$filter,$interval) {
 
+            $scope.isMagicEnabled = 0;
             $scope.staticNow = new Date();
             $scope.staticNowTimeStr = (new Date()).toLocaleTimeString("fr-BE", {hour12: false});
             $scope.currentDateStr = (new Date()).toLocaleDateString("fr-BE", {hour12: false});
@@ -190,6 +191,7 @@ if ($shortVersion) {
             }
             $scope.getKeywordsWL();
             
+            // get from DB the number of min exceptionally allowed today
             $scope.getGameTimeExceptionallyAllowedToday = function() {
                 $myURL = "getGameTimeExceptionallyAllowedToday.php";
                 //console.log("myurl 1381 : " + $myURL);
@@ -208,14 +210,55 @@ if ($shortVersion) {
             }
             $scope.getGameTimeExceptionallyAllowedToday();
 
+            $scope.doMagic = function($operation) {
+                if (!$scope.isPwdOK("doMagic " + $operation,"")) return;
+                console.log("operation : "+ $operation);
+                $scope.myPage = "magic.php?"+$operation+"Magic";
+                //alert("myPage : "+$scope.myPage);
+                console.log("myURL58: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage);
+                $http.get($scope.myPage)
+                .then(
+                function(response) {
+                    $scope.errorMsg = response.data.errMsg;
+                    $scope.sendMail("just did some magic : " + $operation,"some more details...");
+                    $scope.getIsMagicEnabled();
+                    //alert("error message 34 : " + response.data.errMsg)
+                },
+                function(failure) {
+                    //Second function handles error
+                    $errorMsg = "Error in 99 : " + failure;
+                    console.log("error 99 : "+$errorMsg);
+                    alert("error message 99 : " + $errorMsg);
+                });
+            }
+
+            // get from DB wheter magic is enable of not, i.e. the value of the isMagicEnabled parameter
+            $scope.getIsMagicEnabled = function() {
+                $myURL = "magic.php?isMagicEnabled";
+                console.log("myurl 1382 : " + $myURL);
+                $http.get($myURL)
+                .then(
+                function(response) {
+                    $scope.isMagicEnabled = response.data.isMagicEnabled;
+                    //console.log(response.data);
+                    console.log("just updated isMagicEnabled as "+$scope.isMagicEnabled);
+                 },
+                function(failure) {
+                    $errorMsg = "Error in isMagicEnabled : " + failure;
+                    console.log($errorMsg);
+                    alert("error msg 138 : " + $errorMsg);
+                });
+            }
+            $scope.getIsMagicEnabled();
+
             //console.log("test 5555");
 
-	    $scope.sendMail = function($subject,$msg) {
-		$myURL = 'send-mail.php?to="toto240325@gmail.com"&subject='+$subject+'&message='+$msg;
-		//$myURL = 'send-mail.php?subject="minutes added"&message="strange !? ;-)"';
-		//$myURL = "send-mail.php";
-		$http.get($myURL)
-		.then(
+            $scope.sendMail = function($subject,$msg) {
+            $myURL = 'send-mail.php?to="toto240325@gmail.com"&subject='+$subject+'&message='+$msg;
+            //$myURL = 'send-mail.php?subject="minutes added"&message="strange !? ;-)"';
+            //$myURL = "send-mail.php";
+            $http.get($myURL)
+            .then(
                 function(response) {
                     if (response.data.status="simulation !") {
                         console.log("simulation of email sent : " + response.data.additionalInfo)
@@ -228,8 +271,7 @@ if ($shortVersion) {
                     console.log($errorMsg);
                     alert("error msg 1139 : " + $errorMsg);
                 });
-	    }
-
+	        }
 
             getTimePlayedToday = function() {
                 $scope.i = parseInt($scope.i) + 1;
@@ -265,7 +307,7 @@ if ($shortVersion) {
                     return false;
                 }
                 // if pwd was OK, blank it !
-                $scope.pwd = "";
+                //$scope.pwd = "";
                 return true;
             }
 
@@ -344,7 +386,7 @@ if ($shortVersion) {
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
-		            $scope.sendMail("just deleted a keyword in the blacklist : "+$keywordWL,"some more details...");
+		            $scope.sendMail("just deleted a keyword in the blacklist : "+$keyword,"some more details...");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -469,9 +511,13 @@ if (!$shortVersion) {
             <button ng-click="addGamingTime('Add')">Add</button>
             <button ng-click="addGamingTime('Sub')">Sub</button>
             <br>pwd : <input type="password" ng-model="pwd"><br>
+            <button ng-click="doMagic('enable')">EnableMagic</button>
+            <button ng-click="doMagic('disable')">DisableMagic</button>
+
         </form>
         <p>
         <p>
+        <p>magic enabled : {{isMagicEnabled}}
         <p>allowed daily : {{gameTimeAllowedDaily}}
         <p>exceptionally allowed today : {{gameTimeExceptionallyAllowedToday}}
         <p>played time : {{playedTime }} ( {{ i }} )

@@ -83,10 +83,10 @@ function magic($myFunc, $dbhost)
         WHERE pname = 'isMagicEnabled'
         ";
         break;
-    case "enableMagic" : 
+    case "disableMagic" : 
         $query = "
         UPDATE params
-        SET pvalue = '1' 
+        SET pvalue = '0' 
         WHERE pname = 'isMagicEnabled'
         ";
         break;
@@ -164,7 +164,6 @@ function _date($format = "r", $timestamp = false, $timezone = false)
 }
 
 
-
 ///========================================================================================
 // main
 
@@ -173,15 +172,32 @@ $today = _date("Y-m-d", false, 'Europe/Paris');
 
 
 
-if(empty($_GET)) 
-    echo "No GET variables"; 
-else 
-    print_r($_GET); 
+/*
+var_dump($_GET); 
+print_r($_GET); 
+print_r($_GET(1)); 
 
-$myFunc = $_GET;
+
+if(empty($_GET)) {
+   $myFunc = "isMagicEnabled"; }
+else {
+    $param1 = $_GET[1]; 
+    print_r($_GET)[1]; 
+}
+
+    foreach($params as $x => $x_value) {
+
+       echo "Key=" . $x . ", Value=" . $x_value;
+       echo "<br>";
+   }
+*/ 
+
 
 $myFunc = "";
-if (isset($_GET['myFunc'])) {$myFunc = $_GET['myFunc'];}
+if (isset($_GET['isMagicEnabled'])) {$myFunc = "isMagicEnabled";}
+if (isset($_GET['enableMagic'])) {$myFunc = "enableMagic";}
+if (isset($_GET['disableMagic'])) {$myFunc = "disableMagic";}
+
 
 $dbhost = "localhost";
 if (isset($_GET['dbhost'])) {$dbhost = $_GET['dbhost'];}
