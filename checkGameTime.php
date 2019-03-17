@@ -1,7 +1,7 @@
-    <?php
+<?php
 /*
     This script check the status of games played on mypc3 today
- */
+*/
 
 //echo 'Version PHP courante : ' . phpversion() . "<br>";
 $thisServer = $_SERVER['SERVER_NAME'];
@@ -25,6 +25,8 @@ include 'params.php';
 */
 
 $shortVersion = (isset($_GET['short']));
+$mobileVersion = (isset($_GET['mobile']));
+
 ?>
 
 <!--<!DOCTYPE html>
@@ -44,17 +46,22 @@ $shortVersion = (isset($_GET['short']));
         background-color: #ffffff;
         }
 
-
-<?php 
-if ($shortVersion) {
-    echo '
-        p, form, input, button {
-            font-family: verdana;
-            font-size: 40px;
+        div.bordered {
+        border: 4px solid black;
+        width: 150px;
         }
-    ';
-};
-?>
+
+    <?php 
+    #if mobileVersion, then use a bigger font
+    if ($mobileVersion) {
+        echo '
+            p, form, input, button {
+                font-family: verdana;
+                font-size: 40px;
+            }
+        ';
+    };
+    ?>
     </style>
 
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
@@ -72,7 +79,7 @@ if ($shortVersion) {
         var dbhost = "<?php echo $dbhost; ?>";
 
         var app = angular.module('myApp', []);
-        app.controller('myCtrl', function($scope, $http,$location,$filter,$interval) {
+        app.controller('myCtrl', function($scope, $http,$location,$filter,$interval,$timeout) {
 
             $scope.isMagicEnabled = 0;
             $scope.staticNow = new Date();
@@ -94,12 +101,13 @@ if ($shortVersion) {
             }
 
             $scope.myURL = $location.absUrl();
-/*
+            
+            /*
             $scope.count = 0;
             $scope.myFunction = function() {
                 $scope.count++;
             }
-*/
+            */
             $scope.playedTime = 0;
             $scope.i = 0;
             $scope.remainingTimeToPlay = "";
@@ -306,9 +314,14 @@ if ($shortVersion) {
                     $scope.sendMail($txt1 + " - wrong password : " + $scope.pwd,"some more details : "+$txt2);
                     return false;
                 }
-                // if pwd was OK, blank it !
+                // if pwd was OK, blank it (in x seconds) !
                 //$scope.pwd = "";
+                $timeout($scope.blankPwd, 60*1000);
                 return true;
+            }
+
+            $scope.blankPwd = function($operation) {
+                $scope.pwd = "";
             }
 
             $scope.addGamingTime = function($operation) {
@@ -429,45 +442,47 @@ if ($shortVersion) {
     // }
     </script>
  
-    <body ng-app="myApp" ng-controller="myCtrl">
+ <body ng-app="myApp" ng-controller="myCtrl">
 
-<?php 
+    <?php 
 
-if (!$shortVersion) {
-    echo '
-        <!-- windows titles -->
-        <table>
-            <tr ng-repeat="x in fgw">
-                <td>{{ x.date }}</td>
-                <td>{{ x.time }}</td>
-                <td>{{ x.host }}</td>
-                <td>{{ x.title }}</td>
-                <td>{{ x.duration }}</td>
-                <td>{{ x.dur_min }}</td>
-                <td>{{ x.cpu }}</td>
-                <td>{{ x.isgame }}</td>
-            </tr>
-        </table>
-        <p>
-        <p>
-        ';
-    };
+        # if not shortVersion, then display the 15 main window titles
+        if (!$shortVersion) {
+            echo '
+                <!-- windows titles -->
+                <table>
+                    <tr ng-repeat="x in fgw">
+                        <td>{{ x.date }}</td>
+                        <td>{{ x.time }}</td>
+                        <td>{{ x.host }}</td>
+                        <td>{{ x.title }}</td>
+                        <td>{{ x.duration }}</td>
+                        <td>{{ x.dur_min }}</td>
+                        <td>{{ x.cpu }}</td>
+                        <td>{{ x.isgame }}</td>
+                    </tr>
+                </table>
+                <p>
+                <p>
+                ';
+        };
     ?>
 
-        <table>
-            <td valign=top>
+    <table>
+        <td valign=top>
 
-                <!-- blacklist keywords -->
-                <form novalidate>
-                    Add blacklist keyword:<br>
-                    <input type="text" ng-model="newKeyword"><br>
-                    <button ng-click="addKeyword(newKeyword)">Add BL keyword</button>
-                </form>
-                <p>
+            <!-- blacklist keywords -->
+            <form novalidate>
+                Add blacklist keyword:<br>
+                <input type="text" ng-model="newKeyword"><br>
+                <button ng-click="addKeyword(newKeyword)">Add BL keyword</button>
+            </form>
+            <p>
 
-<?php 
-if (!$shortVersion) {
-    echo '
+            <?php 
+            # if not shortVersion, then display the keywords
+            if (!$shortVersion) {
+                echo '
                 <table>
                 <!-- "track by $index" in case of duplicate values -->
                 <tr ng-repeat="x in keywords track by $index">
@@ -476,58 +491,60 @@ if (!$shortVersion) {
                     <td><a href="" ng-click="delKeyword(x)">Del</a></td>
                 </tr>
                 </table>
-    ';
-};
-?>
+                ';
+            };
+            ?>
 
-            </td>
-            <td valign=top>
-                <!-- whitelist keywords -->
-                <form novalidate>
-                    Add whitelist keyword:<br>
-                    <input type="text" ng-model="newKeywordWL"><br>
-                    <button ng-click="addKeywordWL(newKeywordWL)">Add WL keyword</button>
-                </form>
-                <p>
-<?php 
-if (!$shortVersion) {
-    echo '
-                <table>
-                    <!-- "track by $index" in case of duplicate values -->
-                    <tr ng-repeat="x in keywordsWL track by $index">
-                        <td>{{x}}</td>
-                        <td>{{$index}}</td>
-                        <td><a href="" ng-click="delKeywordWL(x)">Del</a></td>
-                    </tr>
-                </table>
-    ';
-};
-?>
-            </td>
-        </table>
-        <form novalidate>
-        Add minutes:
-            <input type="text" ng-model="nbMinToAdd"><br>
-            <button ng-click="addGamingTime('Add')">Add</button>
-            <button ng-click="addGamingTime('Sub')">Sub</button>
-            <br>pwd : <input type="password" ng-model="pwd"><br>
-            <button ng-click="doMagic('enable')">EnableMagic</button>
-            <button ng-click="doMagic('disable')">DisableMagic</button>
+        </td>
+        <td valign=top>
+            <!-- whitelist keywords -->
+            <form novalidate>
+                Add whitelist keyword:<br>
+                <input type="text" ng-model="newKeywordWL"><br>
+                <button ng-click="addKeywordWL(newKeywordWL)">Add WL keyword</button>
+            </form>
+            <p>
+            <?php 
+            # if not shortVersion, then display the WL keywords
+            if (!$shortVersion) {
+                echo '
+                            <table>
+                                <!-- "track by $index" in case of duplicate values -->
+                                <tr ng-repeat="x in keywordsWL track by $index">
+                                    <td>{{x}}</td>
+                                    <td>{{$index}}</td>
+                                    <td><a href="" ng-click="delKeywordWL(x)">Del</a></td>
+                                </tr>
+                            </table>
+                ';
+            };
+            ?>
+        </td>
+    </table>
+    <form novalidate>
+    Add minutes:
+        <input type="text" ng-model="nbMinToAdd"><br>
+        <button ng-click="addGamingTime('Add')">Add</button>
+        <button ng-click="addGamingTime('Sub')">Sub</button>
+        <br>pwd : <input type="password" ng-model="pwd"><br>
+        <button ng-click="doMagic('enable')">EnableMagic</button>
+        <button ng-click="doMagic('disable')">DisableMagic</button>
+    </form>
+    <p>
+    <p>
+    <div class=bordered>magic enabled : {{isMagicEnabled ? "True" : "False"}}</div>
 
-        </form>
-        <p>
-        <p>
-        <p>magic enabled : {{isMagicEnabled}}
-        <p>allowed daily : {{gameTimeAllowedDaily}}
-        <p>exceptionally allowed today : {{gameTimeExceptionallyAllowedToday}}
-        <p>played time : {{playedTime }} ( {{ i }} )
-        <p>Remaining to play : {{ remainingTimeToPlay() }}
 
-<!--
-//<p>error msg : {{errMsg}}
-        <br>
--->
-<!--
--->
-    </body>
+    <p>allowed daily : {{gameTimeAllowedDaily}}
+    <p>exceptionally allowed today : {{gameTimeExceptionallyAllowedToday}}
+    <p>played time : {{playedTime }} ( {{ i }} )
+    <p>Remaining to play : {{ remainingTimeToPlay() }}
+
+    <!--
+    //<p>error msg : {{errMsg}}
+            <br>
+    -->
+    <!--
+    -->
+</body>
 </html>
