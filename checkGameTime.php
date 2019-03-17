@@ -532,8 +532,8 @@ $mobileVersion = (isset($_GET['mobile']));
     </form>
     <p>
     <p>
-    <div class=bordered>magic enabled : {{isMagicEnabled ? "True" : "False"}}</div>
-
+    <div class=bordered>magic enabled : {{isMagicEnabled == "1" ? "True" : "False"}}</div>
+    
 
     <p>allowed daily : {{gameTimeAllowedDaily}}
     <p>exceptionally allowed today : {{gameTimeExceptionallyAllowedToday}}
