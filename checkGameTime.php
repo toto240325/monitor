@@ -48,14 +48,14 @@ $mobileVersion = (isset($_GET['mobile']));
 
         div.bordered {
         border: 4px solid black;
-        width: 150px;
+        width: 400px;
         }
 
     <?php 
     #if mobileVersion, then use a bigger font
     if ($mobileVersion) {
         echo '
-            p, form, input, button {
+            p, form, input, button, div {
                 font-family: verdana;
                 font-size: 40px;
             }
