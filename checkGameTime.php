@@ -309,7 +309,7 @@ $mobileVersion = (isset($_GET['mobile']));
             //console.log("test 777");
 
             $scope.isPwdOK = function($txt1,$txt2) {
-                if ($scope.pwd != "toto") {
+                if ($scope.pwd != "monkiki") {
                     alert("sorry ! password not correct :-(");
                     $scope.sendMail($txt1 + " - wrong password : " + $scope.pwd,"some more details : "+$txt2);
                     return false;
@@ -337,7 +337,7 @@ $mobileVersion = (isset($_GET['mobile']));
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getGameTimeExceptionallyAllowedToday();
-		            $scope.sendMail("just added some time to play","some more details...");
+		            $scope.sendMail("just added some time to play","pw used : " + $scope.pwd);
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -358,7 +358,7 @@ $mobileVersion = (isset($_GET['mobile']));
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
                     $scope.newKeyword = "";
-		            $scope.sendMail("just added a new keyword in the blacklist: "+$keyword,"some more details...");
+		            $scope.sendMail("just added a new keyword in the blacklist: "+$keyword,"pw used : " + $scope.pwd);
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
