@@ -337,7 +337,7 @@ $mobileVersion = (isset($_GET['mobile']));
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getGameTimeExceptionallyAllowedToday();
-		            $scope.sendMail("just added some time to play : " + &nbToAdd,"pw used : " + $scope.pwd);
+		            $scope.sendMail("just added some time to play : " + $nbToAdd,"pw used : " + $scope.pwd);
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
