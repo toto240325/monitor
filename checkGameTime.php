@@ -337,7 +337,7 @@ $mobileVersion = (isset($_GET['mobile']));
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getGameTimeExceptionallyAllowedToday();
-		            $scope.sendMail("just added some time to play : " + $nbToAdd,"pw used : " + $scope.pwd);
+		            $scope.sendMail("just added some time to play : " + $nbToAdd,"pw OK");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -358,7 +358,7 @@ $mobileVersion = (isset($_GET['mobile']));
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
                     $scope.newKeyword = "";
-		            $scope.sendMail("just added a new keyword in the blacklist: "+$keyword,"pw used : " + $scope.pwd);
+		            $scope.sendMail("just added a new keyword in the blacklist: "+$keyword,"pw OK");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -379,7 +379,7 @@ $mobileVersion = (isset($_GET['mobile']));
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywordsWL();
                     $scope.newKeywordWL = "";
-		            $scope.sendMail("just added a new keyword in the whitelist : "+$keywordWL,"some more details...");
+		            $scope.sendMail("just added a new keyword in the whitelist : "+$keywordWL,"pw OK");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -399,7 +399,7 @@ $mobileVersion = (isset($_GET['mobile']));
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywords();
-		            $scope.sendMail("just deleted a keyword in the blacklist : "+$keyword,"some more details...");
+		            $scope.sendMail("just deleted a keyword in the blacklist : "+$keyword,"pw OK");
                     //alert("error message 34 : " + response.data.errMsg)
                 },
                 function(failure) {
@@ -419,7 +419,7 @@ $mobileVersion = (isset($_GET['mobile']));
                 function(response) {
                     $scope.errorMsg = response.data.errMsg;
                     $scope.getKeywordsWL();
-		            $scope.sendMail("just deleted a keyword in the whitelist : "+$keywordWL,"some more details...");
+		            $scope.sendMail("just deleted a keyword in the whitelist : "+$keywordWL,"pw OK");
                     //alert("error message 341 : " + response.data.errMsg)
                 },
                 function(failure) {
