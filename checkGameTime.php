@@ -444,6 +444,7 @@ $mobileVersion = (isset($_GET['mobile']));
  
  <body ng-app="myApp" ng-controller="myCtrl">
 
+    <a href="http://<?php echo $thisServer ?>/monitor/mysqltest4.php">Graph</a>
     <?php 
 
         # if not shortVersion, then display the 15 main window titles
