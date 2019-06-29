@@ -55,10 +55,14 @@ $mobileVersion = (isset($_GET['mobile']));
     #if mobileVersion, then use a bigger font
     if ($mobileVersion) {
         echo '
-            p, form, input, button, div {
+        p, form, input, button, div {
                 font-family: verdana;
                 font-size: 40px;
-            }
+        }
+        table, td, tr, a {
+                font-family: verdana;
+                font-size: 30px;
+        }
         ';
     };
     ?>
@@ -444,7 +448,11 @@ $mobileVersion = (isset($_GET['mobile']));
  
  <body ng-app="myApp" ng-controller="myCtrl">
 
-    <a href="http://<?php echo $thisServer ?>/monitor/mysqltest4.php">Graph</a>
+
+
+
+ <a href="http://<?php echo $thisServer ?>/monitor/mysqltest4.php">Graph</a>
+ <a href="http://<?php echo $thisServer ?>/monitor/checkGameTime.php<?php echo ($mobileVersion ? "?mobile" : "") ?>">Long</a>
     <?php 
 
         # if not shortVersion, then display the 15 main window titles
