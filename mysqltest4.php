@@ -634,7 +634,7 @@ $from = $fromDate->format('Y-m-d');
                 "&order=duration+desc" +
                 "&myFunc="+ $scope.myFunc;
                 //alert("myPage35 : "+$scope.myPage35);
-                //console.log("myURL35: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage35);
+                console.log("myURL35: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage35);
                 $http.get($scope.myPage35)
                 .then(
                 function(response) {
