@@ -207,12 +207,39 @@ $gameTimeExceptionallyAllowedToday = $myArray['totalMin'];
 //    $records = "[]";
 //}
 
+
+//note:returns 0 through 6 but as string so to check if monday do this:
+/*
+if(date('w') == 1) { echo "its monday"; }
+if(date('w') == 2) { echo "its tuesday"; }
+if(date('w') == 3) { echo "its wednesday"; }
+if(date('w') == 4) { echo "its thursday"; }
+if(date('w') == 5) { echo "its friday"; }
+if(date('w') == 6) { echo "its saturday"; }
+if(date('w') == 0) { echo "its sunday"; }
+echo "\n";
+*/
+
+$HH = _date("H", false, 'Europe/Paris');
+$MM = _date("i", false, 'Europe/Paris');
+
+//echo "HH:MM = " . $HH . ":" . $MM . "\n";
+
+// make sure that the time allowed daily is released only after 16:00
+if ($HH < 16) { 
+    //echo "less than\n"; 
+    $allowedTime = 0;
+} else { 
+    //echo "more than\n"; 
+    $allowedTime = $gameTimeAllowedDaily;
+}
+
 switch ($myFunc) {
     case "get" : 
         $outp = '{"errMsg":"' . $errMsg . '"';
         $outp = $outp . ',"date":"' . $date . '"';
         $outp = $outp . ',"gameTimeExceptionallyAllowedToday":"' . $gameTimeExceptionallyAllowedToday . '"';
-        $outp = $outp . ',"gameTimeAllowedDaily":"' . $gameTimeAllowedDaily . '"';
+        $outp = $outp . ',"gameTimeAllowedDaily":"' . $allowedTime . '"';
         $outp = $outp . '}';
         echo $outp;
     break;

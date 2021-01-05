@@ -104,6 +104,7 @@ function getKeywordsWL($myFunc, $keyword, $dbhost)
         //echo $errMsg;
         return array('errMsg' => $errMsg, 'records' => array());
     }
+    $array=array();
 
     switch ($myFunc) {
         case "get" : 
@@ -116,6 +117,8 @@ function getKeywordsWL($myFunc, $keyword, $dbhost)
             //echo now()." before result->num_rows > 0\n";
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
+                        # Converting each column to UTF8
+                        $row = array_map('utf8_encode', $row);
                         $keyword = $row["keyword"];
                         $keywords[] = $keyword;
                 }
@@ -146,7 +149,7 @@ function getKeywordsWL($myFunc, $keyword, $dbhost)
     //$conn->close();
     //echo now()." after conn->close\n";
 
-
+    //var_dump($keywords);
     return array('errMsg' => $errMsg,  'keywords' => $keywords);
 }
 
@@ -212,10 +215,12 @@ switch ($myFunc) {
 //echo "my array :";
 //var_dump($myArray);
 
+//var_dump($myArray);
 
 $errMsg = $myArray['errMsg'];
 //echo "keywords : "; var_dump($myArray['keywords'])  ;
 $records = json_encode($myArray['keywords']);
+//var_dump($records);
 
 //if ($errMsg == "") {
 //    $records = json_encode($myArray['keywordsArray']);

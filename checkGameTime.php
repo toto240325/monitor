@@ -25,6 +25,7 @@ include 'params.php';
 */
 
 $shortVersion = (isset($_GET['short']));
+$shortVersion = 1;
 $mobileVersion = (isset($_GET['mobile']));
 
 ?>
@@ -515,7 +516,7 @@ $mobileVersion = (isset($_GET['mobile']));
             <p>
             <?php 
             # if not shortVersion, then display the WL keywords
-            if (!$shortVersion) {
+            if (!$shortVersion || 1) {
                 echo '
                             <table>
                                 <!-- "track by $index" in case of duplicate values -->
