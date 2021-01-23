@@ -114,6 +114,8 @@ function getKeywords($myFunc, $keyword, $dbhost)
             //echo now()." before result->num_rows > 0\n";
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
+                        # Converting each column to UTF8
+                        $row = array_map('utf8_encode', $row);
                         $keyword = $row["keyword"];
                         $keywords[] = $keyword;
                 }
