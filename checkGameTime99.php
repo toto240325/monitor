@@ -89,6 +89,7 @@ $mobileVersion = (isset($_GET['mobile']));
             $scope.staticNow = new Date();
             $scope.staticNowTimeStr = (new Date()).toLocaleTimeString("fr-BE", {hour12: false});
             $scope.currentDateStr = (new Date()).toLocaleDateString("fr-BE", {hour12: false});
+            $scope.currentDatetimeStr = $scope.currentDateStr+" "+$scope.staticNowTimeStr;
 
             function displayCurrentDate() {
                 $scope.now = new Date();
@@ -315,7 +316,10 @@ $mobileVersion = (isset($_GET['mobile']));
             $scope.isPwdOK = function($txt1,$txt2) {
                 if ($scope.pwd != "monkiki") {
                     alert("sorry ! password not correct :-(");
-                    $scope.sendMail($txt1 + " - wrong password : " + $scope.pwd,"some more details : "+$txt2);
+                    $subject = $txt1 + " - wrong password";
+                    $body = "some more details : <br>wrong pw : "+$scope.pwd+"test"+$txt2;
+                    $body = $body + "time : "+$scope.currentDatetimeStr+"   "+$txt2;
+                    $scope.sendMail($subject,$body);
                     return false;
                 }
                 // if pwd was OK, blank it (in x seconds) !

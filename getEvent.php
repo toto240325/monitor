@@ -12,6 +12,9 @@ http://localhost/monitor/getEvent.php?eventFct=getLastEventByType&type=uploading
 http://192.168.0.147/monitor/getEvent.php?eventFct=getLastEventByType&type=backup+P702
 http://localhost/monitor/getEvent.php?eventFct=add&time="2018-01-16"&host=myHost&text=my+text&type=my+type
 
+curl "http://192.168.0.147/monitor/getEventTmp.php?eventFct=getLastEventByType&type=temperature"
+curl "http://192.168.0.147/monitor/getEventTmp.php?eventFct=add&type=temperature&text=99&host=`hostname`"
+
 Mockup : (no database connection) 
 http://192.168.0.147/monitor/getEvent.php?type=mockup
 

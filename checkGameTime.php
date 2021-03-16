@@ -316,7 +316,7 @@ $mobileVersion = (isset($_GET['mobile']));
             $scope.isPwdOK = function($txt1,$txt2) {
                 if ($scope.pwd != "monkiki") {
                     alert("sorry ! password not correct :-(");
-                    $scope.sendMail($txt1 + " - wrong password : " + $scope.pwd,"some more details : "+$txt2);
+                    $scope.sendMail($txt1 + " - wrong password : " + $scope.pwd,"wrong pw : "+$scope.pwd+"\ntxt2:"+$txt2);
                     return false;
                 }
                 // if pwd was OK, blank it (in x seconds) !
