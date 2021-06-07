@@ -669,6 +669,26 @@ $from = $fromDate->format('Y-m-d');
                     alert("error msg 36 : " + $errorMsg);
                 });
             }
+
+            $scope.getLastTempFrigo = function() {
+                //$scope.myPage36 = "http://"+webserver+"/monitor/getEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
+                //$scope.myPage36 = "getEvent.php?dbhost="+ $scope.dbhost+"&type=temperature";
+                $scope.myPage36 = "getEvent.php?eventFct=getLastEventByType&dbhost=" + $scope.dbhost+"&type=tempFrigo";              
+                //console.log("myURL36: http://<?php echo $thisServer ?>/monitor/" +$scope.myPage36);
+                $http.get($scope.myPage36i)
+                .then(
+                function(response) {
+                    $scope.lastTemp = response.data.records[0].time;
+                    $scope.lastDetectionTimeFrigo = response.data.records[0].time;
+                    $scope.lastDetectionTempFrigo = response.data.records[0].text;
+                },
+                function(failure) {
+                    $errorMsg = "Error in getEvent 36 : " + failure;
+                    console.log($errorMsg);
+                    alert("error msg 36 : " + $errorMsg);
+                });
+            }
+
             $scope.getLastEvent = function($myArray,$type) {
                 //$myURL = "http://"+webserver+"/monitor/getEvent.php?type="+$type;
                 $myURL = "getEvent.php?type="+$type+"&eventFct=getLastEventByType";
@@ -714,10 +734,13 @@ $from = $fromDate->format('Y-m-d');
             $scope.eventsArray["1"] = "init1";
             $scope.eventsArray["backup P702"] = "";
             $scope.eventsArray["getWindowTitle mypc3"] = "";
+            $scope.eventsArray["tempFrigo"] = "99";
 
             $scope.getLastEvent($scope.eventsArray,"1");
             $scope.getLastEvent($scope.eventsArray,"backup P702");
             $scope.getLastEventGetWindowTitleMypc3($scope.eventsArray,"getWindowTitle mypc3");
+            $scope.getLastEvent($scope.eventsArray,"tempFrigo");
+
 
         });
 
@@ -898,6 +921,7 @@ $from = $fromDate->format('Y-m-d');
                 -->
                 <b>backup P702    : <span  ng-style="myStyleLastEvent('backup P702',eventsArray['backup P702'])"> {{ eventsArray["backup P702"] }} </span></b><br>
                 <b>last getWindows: <span  ng-style="myStyleLastEvent('getWindowTitle mypc3',eventsArray['getWindowTitle mypc3'])"> {{ eventsArray["getWindowTitle mypc3"] }} </span></b><br>
+                <b>last tempFrigo: <span  ng-style="myStyleLastEvent('getWindowTitle mypc3',eventsArray['getWindowTitle mypc3'])"> {{ eventsArray["tempFrigo"] }} </span></b><br>
             </td>
         </table>
         <hr> <!--------------------------------------------------->
