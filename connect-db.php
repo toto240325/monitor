@@ -1,6 +1,6 @@
 <?php
 
-if ($dbhost = '192.168.0.147')
+if ($dbhost = '192.168.0.148')
 {
 $dbuser = 'toto';
 $dbpass = 'Toto!';
